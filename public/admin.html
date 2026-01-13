@@ -3,370 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel Premium</title>
+    <title>Admin Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { background-color: #0f172a; color: #cbd5e1; font-family: 'Inter', sans-serif; }
-        .sidebar { transition: transform 0.3s ease-in-out; }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        ::-webkit-scrollbar-track { background: #1e293b; }
-    </style>
+    <style>body{background-color:#0f172a;color:#cbd5e1;font-family:'Inter',sans-serif;}.sidebar{transition:transform 0.3s ease-in-out;}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#334155;border-radius:10px}</style>
 </head>
 <body class="overflow-hidden h-screen flex">
-
-    <!-- LOGIN SCREEN -->
+    <!-- Login -->
     <div id="login" class="fixed inset-0 z-[100] bg-slate-900 flex items-center justify-center">
         <form onsubmit="doLogin(event)" class="bg-slate-800 p-8 rounded-2xl w-full max-w-sm border border-slate-700 shadow-2xl text-center">
-            <div class="mb-6">
-                <div class="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <i class="fa-solid fa-user-shield text-3xl text-emerald-500"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-white">Admin Portal</h2>
-            </div>
-            <div class="space-y-4 text-left">
-                <div>
-                    <label class="text-xs text-gray-400 ml-1">Email</label>
-                    <input type="email" id="em" placeholder="admin@gmail.com" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none focus:border-emerald-500 transition">
-                </div>
-                <div>
-                    <label class="text-xs text-gray-400 ml-1">Password</label>
-                    <input type="password" id="pw" placeholder="••••••" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none focus:border-emerald-500 transition">
-                </div>
-                <button class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg shadow-lg transition transform active:scale-95">Login Dashboard</button>
-            </div>
-            <p id="errMsg" class="text-red-500 mt-4 text-xs hidden text-center"></p>
+            <i class="fa-solid fa-user-shield text-5xl text-emerald-500 mb-4"></i>
+            <h2 class="text-2xl font-bold text-white mb-6">Admin Access</h2>
+            <input type="email" id="em" placeholder="Email" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white mb-3 outline-none focus:border-emerald-500 transition">
+            <input type="password" id="pw" placeholder="Password" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white mb-5 outline-none focus:border-emerald-500 transition">
+            <button class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg shadow-lg">Login Dashboard</button>
+            <p id="errMsg" class="text-red-500 mt-4 text-xs hidden"></p>
         </form>
     </div>
 
-    <!-- MOBILE BACKDROP -->
+    <!-- Sidebar Backdrop -->
     <div id="backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 z-40 hidden backdrop-blur-sm md:hidden"></div>
 
-    <!-- SIDEBAR -->
+    <!-- Sidebar -->
     <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-50 w-64 bg-slate-800 border-r border-slate-700 transform -translate-x-full md:translate-x-0 flex flex-col h-full shadow-2xl">
         <div class="h-20 flex items-center px-6 border-b border-slate-700">
             <i class="fa-solid fa-coins text-emerald-500 text-2xl mr-2"></i>
             <h1 class="text-xl font-bold text-white tracking-wide">Dollar<span class="text-emerald-500">Kamai</span></h1>
         </div>
-        
         <nav class="flex-1 overflow-y-auto p-4 space-y-2">
-            <p class="px-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Main Menu</p>
-            <button onclick="nav('home')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-emerald-400 bg-emerald-500/10 transition">
-                <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
-            </button>
-            <button onclick="nav('users')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700 hover:text-white transition">
-                <i class="fa-solid fa-users w-5"></i> Members
-            </button>
-            <button onclick="nav('tasks')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700 hover:text-white transition">
-                <i class="fa-solid fa-list-check w-5"></i> Task Manager
-            </button>
-            <button onclick="nav('withdraw')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700 hover:text-white transition">
-                <i class="fa-solid fa-wallet w-5"></i> Withdrawals
-            </button>
-            <button onclick="nav('refer')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700 hover:text-white transition">
-                <i class="fa-solid fa-user-group w-5"></i> Referrals
-            </button>
-            
-            <p class="px-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider mt-6 mb-2">System</p>
-            <button onclick="nav('settings')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700 hover:text-white transition">
-                <i class="fa-solid fa-gear w-5"></i> Settings
-            </button>
+            <p class="px-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Menu</p>
+            <button onclick="nav('home')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-emerald-400 bg-emerald-500/10"><i class="fa-solid fa-chart-pie w-5"></i> Dashboard</button>
+            <button onclick="nav('users')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-users w-5"></i> Members</button>
+            <button onclick="nav('refer')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-user-group w-5"></i> Referrals</button>
+            <button onclick="nav('withdraw')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-wallet w-5"></i> Withdraws</button>
+            <button onclick="nav('tasks')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-list-check w-5"></i> Tasks</button>
+            <button onclick="nav('settings')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-gear w-5"></i> Settings</button>
         </nav>
-
         <div class="p-4 border-t border-slate-700">
-            <button onclick="firebase.auth().signOut()" class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-red-400 bg-red-500/10 hover:bg-red-500 hover:text-white transition shadow">
-                <i class="fa-solid fa-power-off"></i> Logout
-            </button>
+            <button onclick="firebase.auth().signOut()" class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-red-400 bg-red-500/10 hover:bg-red-500 hover:text-white transition"><i class="fa-solid fa-power-off"></i> Logout</button>
         </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
+    <!-- Main Content -->
     <main class="flex-1 flex flex-col h-screen overflow-hidden md:ml-64 w-full bg-slate-900">
-        <!-- TOPBAR -->
         <header class="h-20 bg-slate-800/80 backdrop-blur border-b border-slate-700 flex items-center justify-between px-6 z-20">
             <div class="flex items-center gap-4">
-                <button onclick="toggleSidebar()" class="md:hidden text-gray-300 hover:text-white p-2 rounded hover:bg-slate-700">
-                    <i class="fa-solid fa-bars text-xl"></i>
-                </button>
-                <h2 id="pageTitle" class="text-lg font-bold text-white tracking-wide">Dashboard Overview</h2>
+                <button onclick="toggleSidebar()" class="md:hidden text-gray-300 hover:text-white"><i class="fa-solid fa-bars text-xl"></i></button>
+                <h2 id="pageTitle" class="text-lg font-bold text-white tracking-wide">Overview</h2>
             </div>
             <div class="flex items-center gap-3">
                 <div class="text-right hidden sm:block">
-                    <p class="text-xs font-bold text-white">Super Admin</p>
-                    <p class="text-[10px] text-emerald-500 font-bold">● Active Now</p>
+                    <p class="text-xs font-bold text-white">Admin</p>
+                    <p class="text-[10px] text-emerald-500">● Online</p>
                 </div>
-                <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600 text-gray-400">
-                    <i class="fa-solid fa-user-tie"></i>
-                </div>
+                <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600"><i class="fa-solid fa-user-tie text-gray-400"></i></div>
             </div>
         </header>
 
-        <!-- CONTENT AREA -->
         <div class="flex-1 overflow-y-auto p-6 md:p-8 scroll-smooth">
-            
-            <!-- 1. DASHBOARD HOME -->
+            <!-- Home -->
             <div id="t-home" class="page block space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Total Users -->
-                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg relative overflow-hidden group">
-                        <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:scale-110 transition"><i class="fa-solid fa-users text-6xl"></i></div>
+                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg relative overflow-hidden">
+                        <div class="absolute right-0 top-0 p-4 opacity-10"><i class="fa-solid fa-users text-6xl"></i></div>
                         <p class="text-xs text-gray-400 uppercase tracking-widest font-bold">Total Users</p>
                         <h2 id="stUser" class="text-4xl font-bold text-white mt-2">...</h2>
                     </div>
-                    <!-- Pending Withdraws -->
-                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg relative overflow-hidden group">
-                        <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:scale-110 transition"><i class="fa-solid fa-clock text-6xl text-yellow-500"></i></div>
+                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg relative overflow-hidden">
+                        <div class="absolute right-0 top-0 p-4 opacity-10"><i class="fa-solid fa-clock text-6xl text-yellow-500"></i></div>
                         <p class="text-xs text-gray-400 uppercase tracking-widest font-bold">Pending Pay</p>
                         <h2 id="stPay" class="text-4xl font-bold text-yellow-500 mt-2">...</h2>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. MEMBERS MANAGEMENT -->
+            <!-- Members -->
             <div id="t-users" class="page hidden space-y-4">
                 <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
                     <h3 class="font-bold text-white">Member List</h3>
-                    <button onclick="loadUsers()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-500 shadow transition flex items-center gap-2">
-                        <i class="fa-solid fa-rotate"></i> Refresh
-                    </button>
+                    <button onclick="loadUsers()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-500 shadow"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
                 </div>
                 <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm text-gray-400">
-                            <thead class="bg-slate-700 text-white text-xs uppercase font-bold">
-                                <tr>
-                                    <th class="p-4">User Info</th>
-                                    <th class="p-4">Contact</th>
-                                    <th class="p-4">Balance</th>
-                                    <th class="p-4 text-center">Actions</th>
-                                </tr>
-                            </thead>
+                            <thead class="bg-slate-700 text-white text-xs uppercase font-bold"><tr><th class="p-4">User</th><th class="p-4">Contact</th><th class="p-4">Balance</th><th class="p-4 text-center">Actions</th></tr></thead>
                             <tbody id="userTable" class="divide-y divide-slate-700"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- 3. TASK MANAGER (CORRECTED) -->
-            <div id="t-tasks" class="page hidden space-y-6">
-                <!-- Add Task Form -->
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg">
-                    <h3 class="font-bold text-white mb-4 border-b border-slate-700 pb-2">Create New Task</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="text-xs text-gray-400 mb-1 block">Task Title</label>
-                            <input id="tt" placeholder="Ex: Join Channel" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-emerald-500">
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-400 mb-1 block">Target Link</label>
-                            <input id="tl" placeholder="https://..." class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-emerald-500">
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-400 mb-1 block">Reward (Tk)</label>
-                            <input id="tr" type="number" placeholder="Ex: 5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-emerald-500">
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-400 mb-1 block">Timer (Seconds)</label>
-                            <input id="tm" type="number" placeholder="Ex: 10" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-emerald-500">
-                        </div>
-                    </div>
-                    <button onclick="addTask()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-lg font-bold shadow-lg transition w-full md:w-auto">
-                        <i class="fa-solid fa-plus-circle mr-2"></i> Publish Task
-                    </button>
-                </div>
-
-                <!-- Task List -->
-                <div id="taskList" class="space-y-3"></div>
-            </div>
-
-            <!-- 4. WITHDRAWALS -->
+            <!-- Withdraws -->
             <div id="t-withdraw" class="page hidden space-y-4">
-                <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-white">Requests</h3>
-                    <button onclick="loadW()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-500 shadow"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
-                </div>
+                <button onclick="loadW()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow"><i class="fa-solid fa-rotate mr-1"></i> Refresh List</button>
                 <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm text-gray-400">
-                            <thead class="bg-slate-700 text-white text-xs uppercase font-bold">
-                                <tr>
-                                    <th class="p-4">Request Details</th>
-                                    <th class="p-4">Amount</th>
-                                    <th class="p-4">Decision</th>
-                                </tr>
-                            </thead>
+                            <thead class="bg-slate-700 text-white text-xs uppercase font-bold"><tr><th class="p-4">Request Details</th><th class="p-4">Amount</th><th class="p-4">Decision</th></tr></thead>
                             <tbody id="wTable" class="divide-y divide-slate-700"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- 5. REFERRALS -->
-            <div id="t-refer" class="page hidden space-y-4">
-                <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-white">Referral Stats</h3>
-                    <button onclick="loadRefs()" class="bg-purple-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-purple-500">Load Top 20</button>
+            <!-- Tasks -->
+            <div id="t-tasks" class="page hidden space-y-6">
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg">
+                    <h3 class="font-bold text-white mb-4 border-b border-slate-700 pb-2">Create New Task</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div><label class="text-xs text-gray-400 mb-1 block">Task Title</label><input id="tt" placeholder="Ex: Join Channel" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-emerald-500"></div>
+                        <div><label class="text-xs text-gray-400 mb-1 block">Target Link</label><input id="tl" placeholder="https://..." class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-emerald-500"></div>
+                        <div><label class="text-xs text-gray-400 mb-1 block">Reward (Tk)</label><input id="tr" type="number" placeholder="Ex: 5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-emerald-500"></div>
+                        <div><label class="text-xs text-gray-400 mb-1 block">Timer (Seconds)</label><input id="tm" type="number" placeholder="Ex: 10" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-emerald-500"></div>
+                    </div>
+                    <button onclick="addTask()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-lg font-bold shadow-lg transition"><i class="fa-solid fa-plus-circle mr-2"></i> Publish Task</button>
                 </div>
+                <div id="taskList" class="space-y-3"></div>
+            </div>
+
+            <!-- Referrals -->
+            <div id="t-refer" class="page hidden space-y-4">
+                <button onclick="loadRefs()" class="bg-purple-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-purple-500">Load Top 20</button>
                 <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm text-gray-400">
-                            <thead class="bg-slate-700 text-white text-xs uppercase font-bold">
-                                <tr>
-                                    <th class="p-4">User Name</th>
-                                    <th class="p-4">Total Invited</th>
-                                    <th class="p-4">Total Earned</th>
-                                </tr>
-                            </thead>
+                            <thead class="bg-slate-700 text-white text-xs uppercase font-bold"><tr><th class="p-4">User Name</th><th class="p-4">Total Invited</th><th class="p-4">Total Earned</th></tr></thead>
                             <tbody id="refTable" class="divide-y divide-slate-700"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- 6. SETTINGS -->
+            <!-- Settings (Updated) -->
             <div id="t-settings" class="page hidden space-y-4">
                 <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg max-w-2xl">
                     <h3 class="font-bold text-white mb-4">App Configuration</h3>
-                    <div class="mb-4">
-                        <label class="block text-xs text-gray-400 mb-2 uppercase font-bold">Marquee Notice Text</label>
-                        <textarea id="setNot" rows="3" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-emerald-500"></textarea>
-                    </div>
+                    
+                    <label class="block text-xs text-gray-400 mb-2 uppercase font-bold">Marquee Notice Text</label>
+                    <textarea id="setNot" rows="2" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-emerald-500 mb-4"></textarea>
+                    
+                    <label class="block text-xs text-gray-400 mb-2 uppercase font-bold">Official Channel Link</label>
+                    <input id="setChannel" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm mb-4" placeholder="https://t.me/...">
+
                     <div class="flex items-center justify-between mb-6 bg-slate-900 p-3 rounded-lg border border-slate-600">
                         <span class="text-white text-sm">Maintenance Mode</span>
                         <input type="checkbox" id="setMaint" class="w-5 h-5 accent-emerald-500">
                     </div>
-                    <button onclick="saveSet()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-lg font-bold shadow-lg transition">
-                        <i class="fa-solid fa-save mr-2"></i> Save Changes
-                    </button>
+                    
+                    <button onclick="saveSet()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-lg font-bold shadow-lg transition"><i class="fa-solid fa-save mr-2"></i> Save Changes</button>
                 </div>
             </div>
 
         </div>
     </main>
 
-    <!-- Firebase SDKs -->
+    <!-- Scripts -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
     <script>
-        // ⚠️⚠️⚠️ Replace with your actual Firebase Config ⚠️⚠️⚠️
+        // ⚠️⚠️⚠️ Firebase Config ⚠️⚠️⚠️
         const firebaseConfig = {
-            apiKey: "AIzaSyCgVhOPt9w6UhZWop6QLmq7AO3cpZtsQmI",
-            authDomain: "dollarkamai1.firebaseapp.com",
-            projectId: "dollarkamai1",
-            storageBucket: "dollarkamai1.firebasestorage.app",
-            messagingSenderId: "278970320528",
-            appId: "1:278970320528:web:30d08c635ed9e623f1ba15"
-        };
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig); const auth=firebase.auth(); const db=firebase.firestore();
+
+        function doLogin(e){e.preventDefault();auth.signInWithEmailAndPassword(document.getElementById('em').value,document.getElementById('pw').value).catch(e=>{document.getElementById('errMsg').innerText=e.message;document.getElementById('errMsg').classList.remove('hidden')})}
+        auth.onAuthStateChanged(u=>{if(u){document.getElementById('login').classList.add('hidden');init()}else{document.getElementById('login').classList.remove('hidden')}});
         
-        try { firebase.initializeApp(firebaseConfig); } catch(e){}
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // --- AUTH ---
-        function doLogin(e){ 
-            e.preventDefault(); 
-            auth.signInWithEmailAndPassword(document.getElementById('em').value, document.getElementById('pw').value)
-                .catch(err => { document.getElementById('errMsg').innerText = err.message; document.getElementById('errMsg').classList.remove('hidden'); });
-        }
-        auth.onAuthStateChanged(u => {
-            if(u){ document.getElementById('login').classList.add('hidden'); init(); }
-            else { document.getElementById('login').classList.remove('hidden'); }
-        });
-
-        // --- NAVIGATION ---
-        function toggleSidebar(){ const s=document.getElementById('sidebar'); const b=document.getElementById('backdrop'); s.classList.toggle('-translate-x-full'); b.classList.toggle('hidden'); }
+        function toggleSidebar(){const s=document.getElementById('sidebar');const b=document.getElementById('backdrop');s.classList.toggle('-translate-x-full');b.classList.toggle('hidden');}
         function nav(p){
-            document.querySelectorAll('.page').forEach(e=>e.classList.add('hidden')); document.getElementById('t-'+p).classList.remove('hidden');
+            document.querySelectorAll('.page').forEach(e=>e.classList.add('hidden'));document.getElementById('t-'+p).classList.remove('hidden');
             document.querySelectorAll('.nav-item').forEach(e=>{e.classList.remove('bg-emerald-500/10','text-emerald-400');e.classList.add('text-gray-400')});
             event.currentTarget.classList.remove('text-gray-400'); event.currentTarget.classList.add('bg-emerald-500/10','text-emerald-400');
             document.getElementById('pageTitle').innerText = p.charAt(0).toUpperCase() + p.slice(1);
-            if(window.innerWidth<768) toggleSidebar();
+            if(window.innerWidth<768)toggleSidebar();
             if(p=='users')loadUsers(); if(p=='tasks')loadTasks(); if(p=='withdraw')loadW(); if(p=='refer')loadRefs();
         }
 
-        // --- INIT ---
         function init(){
             db.collection('users').get().then(s=>document.getElementById('stUser').innerText=s.size);
             db.collection('withdrawals').where('status','==','pending').onSnapshot(s=>document.getElementById('stPay').innerText=s.size);
             db.collection('settings').doc('config').get().then(d=>{
                 if(d.exists) {
-                    document.getElementById('setNot').value = d.data().notice||'';
-                    document.getElementById('setMaint').checked = d.data().maintenance||false;
+                    document.getElementById('setNot').value=d.data().notice||'';
+                    document.getElementById('setMaint').checked=d.data().maintenance||false;
+                    document.getElementById('setChannel').value=d.data().channelLink||'';
                 }
             });
         }
 
-        // --- USERS ---
         async function loadUsers(){
-            const t=document.getElementById('userTable'); t.innerHTML='<tr><td colspan="4" class="p-4 text-center">Loading...</td></tr>';
+            const t=document.getElementById('userTable');t.innerHTML='<tr><td colspan="4" class="p-4 text-center">Loading...</td></tr>';
             const s=await db.collection('users').limit(50).get(); t.innerHTML='';
             s.forEach(d=>{
                 const u=d.data();
-                t.innerHTML+=`<tr class="border-b border-slate-700 hover:bg-slate-800/50">
-                    <td class="p-4"><div class="font-bold text-white">${u.name}</div><div class="text-xs text-gray-500 font-mono">${u.id}</div></td>
-                    <td class="p-4 text-xs text-gray-300">${u.phone||'-'}<br>${u.email||'-'}</td>
-                    <td class="p-4 font-bold text-emerald-400">৳${u.balance.toFixed(2)}</td>
-                    <td class="p-4 flex gap-2 justify-center">
-                        <button onclick="editBal('${d.id}',${u.balance})" class="bg-blue-600/20 text-blue-400 w-8 h-8 rounded hover:bg-blue-600 hover:text-white transition"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="ban('${d.id}',${u.isBanned})" class="bg-yellow-600/20 text-yellow-400 w-8 h-8 rounded hover:bg-yellow-600 hover:text-white transition"><i class="fa-solid ${u.isBanned?'fa-check':'fa-ban'}"></i></button>
-                        <button onclick="del('${d.id}')" class="bg-red-600/20 text-red-400 w-8 h-8 rounded hover:bg-red-600 hover:text-white transition"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>`;
+                t.innerHTML+=`<tr class="border-b border-slate-700 hover:bg-slate-800/50"><td class="p-4"><div class="font-bold text-white">${u.name}</div><div class="text-xs text-gray-500 font-mono">${u.id}</div></td><td class="p-4 text-xs text-gray-400">${u.phone||'-'}<br>${u.email||'-'}</td><td class="p-4 font-bold text-emerald-400">৳${u.balance.toFixed(2)}</td><td class="p-4 flex gap-2 justify-center"><button onclick="editBal('${d.id}',${u.balance})" class="bg-blue-600/20 text-blue-400 w-8 h-8 rounded hover:bg-blue-600 hover:text-white transition"><i class="fa-solid fa-pen"></i></button><button onclick="ban('${d.id}',${u.isBanned})" class="bg-yellow-600/20 text-yellow-400 w-8 h-8 rounded hover:bg-yellow-600 hover:text-white transition"><i class="fa-solid ${u.isBanned?'fa-check':'fa-ban'}"></i></button><button onclick="del('${d.id}')" class="bg-red-600/20 text-red-400 w-8 h-8 rounded hover:bg-red-600 hover:text-white transition"><i class="fa-solid fa-trash"></i></button></td></tr>`;
             });
         }
         async function editBal(i,o){const n=prompt('New Balance:',o); if(n) await db.collection('users').doc(i).update({balance:Number(n)}); loadUsers();}
         async function ban(i,s){if(confirm(s?'Unban?':'Ban?')) await db.collection('users').doc(i).update({isBanned:!s}); loadUsers();}
         async function del(i){if(confirm('Delete?')) await db.collection('users').doc(i).delete(); loadUsers();}
 
-        // --- TASKS (CORRECTED) ---
         async function loadTasks(){
             const d=document.getElementById('taskList'); d.innerHTML='<div class="text-center text-gray-500">Loading...</div>';
             const s=await db.collection('tasks').where('active','==',true).get(); d.innerHTML='';
             s.forEach(o=>{
-                const t = o.data();
-                d.innerHTML+=`
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center group hover:border-emerald-500/30 transition">
-                    <div>
-                        <div class="font-bold text-white text-sm">${t.title} <span class="ml-2 text-[10px] bg-slate-700 px-2 py-0.5 rounded text-yellow-500">⏱️ ${t.timer}s</span></div>
-                        <div class="text-xs text-gray-500 mt-1 truncate max-w-[200px]">${t.link}</div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="font-bold text-emerald-400">৳${t.reward}</span>
-                        <button onclick="delT('${o.id}')" class="text-gray-500 hover:text-red-500 transition"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                </div>`;
+                const t=o.data();
+                d.innerHTML+=`<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center group hover:border-emerald-500/30 transition"><div><div class="font-bold text-white text-sm">${t.title} <span class="ml-2 text-[10px] bg-slate-700 px-2 py-0.5 rounded text-yellow-500">⏱️ ${t.timer}s</span></div><div class="text-xs text-gray-500 mt-1 truncate max-w-[200px]">${t.link}</div></div><div class="flex items-center gap-4"><span class="font-bold text-emerald-400">৳${t.reward}</span><button onclick="delT('${o.id}')" class="text-gray-500 hover:text-red-500 transition"><i class="fa-solid fa-trash"></i></button></div></div>`;
             });
         }
         async function addTask(){
             const t=document.getElementById('tt').value, l=document.getElementById('tl').value, r=document.getElementById('tr').value, m=document.getElementById('tm').value;
-            if(t&&l&&r&&m){
-                await db.collection('tasks').add({title:t, link:l, reward:Number(r), timer:Number(m), active:true, createdAt: new Date()});
-                document.getElementById('tt').value=''; document.getElementById('tl').value='';
-                loadTasks();
-            } else { alert("Please fill all fields!"); }
+            if(t&&l&&r&&m){ await db.collection('tasks').add({title:t, link:l, reward:Number(r), timer:Number(m), active:true, createdAt: new Date()}); document.getElementById('tt').value=''; document.getElementById('tl').value=''; loadTasks(); } 
+            else { alert("Please fill all fields!"); }
         }
         async function delT(i){if(confirm('Delete?')) await db.collection('tasks').doc(i).update({active:false}); loadTasks();}
 
-        // --- WITHDRAWS ---
         async function loadW(){
             const t=document.getElementById('wTable'); t.innerHTML='<tr><td colspan="3" class="p-4 text-center">Loading...</td></tr>';
             const s=await db.collection('withdrawals').where('status','==','pending').get(); t.innerHTML='';
             if(s.empty){ t.innerHTML='<tr><td colspan="3" class="p-4 text-center text-gray-500">No Pending Requests</td></tr>'; return; }
             s.forEach(d=>{
                 const w=d.data();
-                t.innerHTML+=`<tr class="border-b border-slate-700">
-                    <td class="p-4"><div class="font-bold text-white">${w.userName}</div><div class="text-xs text-emerald-400 font-mono">${w.method}: ${w.number}</div></td>
-                    <td class="p-4 font-bold text-white text-lg">৳${w.amount}</td>
-                    <td class="p-4 flex gap-2">
-                        <button onclick="procW('${d.id}','paid')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded text-xs font-bold shadow">Approve</button>
-                        <button onclick="rejectW('${d.id}',${w.amount},'${w.userId}')" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded text-xs font-bold shadow">Decline</button>
-                    </td>
-                </tr>`;
+                t.innerHTML+=`<tr class="border-b border-slate-700"><td class="p-4"><div class="font-bold text-white">${w.userName}</div><div class="text-xs text-emerald-400 font-mono">${w.method}: ${w.number}</div></td><td class="p-4 font-bold text-white text-lg">৳${w.amount}</td><td class="p-4 flex gap-2"><button onclick="procW('${d.id}','paid')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded text-xs font-bold shadow">Approve</button><button onclick="rejectW('${d.id}',${w.amount},'${w.userId}')" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded text-xs font-bold shadow">Decline</button></td></tr>`;
             });
         }
         async function procW(id,st){if(confirm("Approve?")) {await db.collection('withdrawals').doc(id).update({status:st}); loadW();}}
@@ -379,7 +245,6 @@
             await b.commit(); loadW();
         }
 
-        // --- REFERRALS ---
         async function loadRefs(){
             const t=document.getElementById('refTable'); t.innerHTML='<tr><td colspan="3" class="p-4 text-center">Loading...</td></tr>';
             const s=await db.collection('users').orderBy('refCount','desc').limit(20).get(); t.innerHTML='';
@@ -389,7 +254,8 @@
         async function saveSet(){
             await db.collection('settings').doc('config').set({
                 notice:document.getElementById('setNot').value,
-                maintenance:document.getElementById('setMaint').checked
+                maintenance:document.getElementById('setMaint').checked,
+                channelLink:document.getElementById('setChannel').value
             },{merge:true});
             alert('Saved!');
         }
