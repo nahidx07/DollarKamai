@@ -1,208 +1,157 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dollar Kamai</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #0f172a; color: white; user-select: none; }
-        .modal { transition: opacity 0.3s ease; opacity: 0; pointer-events: none; }
-        .modal.active { opacity: 1; pointer-events: auto; }
-        .loader { border: 3px solid #1e293b; border-top: 3px solid #10b981; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
 </head>
-<body class="pb-20">
-    <!-- TIMER MODAL -->
-    <div id="timerModal" class="modal fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
-        <div class="bg-slate-800 p-8 rounded-2xl text-center border border-emerald-500/30 w-full max-w-sm">
-            <i class="fa-solid fa-clock text-4xl text-emerald-500 mb-4 animate-pulse"></i>
-            <h2 class="text-xl font-bold mb-2">Please Wait</h2>
-            <h1 id="countdown" class="text-5xl font-bold text-emerald-400 my-4">0s</h1>
-            <p class="text-xs text-red-400">Do not close the app!</p>
-        </div>
+<body class="bg-slate-900 text-gray-300 font-sans p-4">
+    <!-- LOGIN -->
+    <div id="login" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-50">
+        <form onsubmit="doLogin(event)" class="bg-slate-800 p-6 rounded-lg w-full max-w-sm border border-slate-700">
+            <h2 class="text-xl font-bold text-white mb-4 text-center">Admin Login</h2>
+            <input type="email" id="em" placeholder="Email" class="w-full bg-slate-900 p-3 rounded mb-3 border border-slate-600">
+            <input type="password" id="pw" placeholder="Password" class="w-full bg-slate-900 p-3 rounded mb-4 border border-slate-600">
+            <button class="w-full bg-emerald-600 text-white p-3 rounded font-bold">Login</button>
+        </form>
     </div>
 
-    <!-- MAIN APP -->
-    <div id="app" class="hidden">
-        <header class="bg-slate-800 p-6 rounded-b-3xl shadow-lg mb-4">
-            <div class="flex justify-between items-center mb-4">
-                <div class="flex gap-2 items-center">
-                    <div class="w-10 h-10 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-500"><i class="fa-solid fa-user"></i></div>
-                    <div>
-                        <h2 id="uName" class="font-bold text-sm">...</h2>
-                        <p class="text-[10px] text-gray-400">ID: <span id="uId">...</span></p>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <p class="text-[10px] text-gray-400 uppercase">Balance</p>
-                    <h1 class="text-2xl font-bold text-emerald-400">৳<span id="bal">0</span></h1>
-                </div>
-            </div>
-            <!-- Marquee -->
-            <div class="bg-black/30 p-2 rounded flex gap-2 items-center">
-                <i class="fa-solid fa-bullhorn text-yellow-500 text-xs"></i>
-                <marquee id="mqNotice" class="text-xs text-gray-300">Welcome to Dollar Kamai...</marquee>
-            </div>
+    <!-- DASHBOARD -->
+    <div id="dash" class="hidden max-w-4xl mx-auto">
+        <header class="flex justify-between items-center mb-6 pb-4 border-b border-slate-700">
+            <h1 class="text-xl font-bold text-white">DollarKamai Admin</h1>
+            <nav class="space-x-4 text-sm">
+                <button onclick="tab('home')" class="hover:text-white">Home</button>
+                <button onclick="tab('users')" class="hover:text-white">Users</button>
+                <button onclick="tab('tasks')" class="hover:text-white">Tasks</button>
+                <button onclick="tab('withdraw')" class="hover:text-white">Withdraws</button>
+                <button onclick="tab('settings')" class="hover:text-white">Settings</button>
+            </nav>
         </header>
 
-        <main class="px-4">
-            <!-- TABS -->
-            <div id="tab-home" class="page">
-                <button onclick="window.open('https://t.me/DollarKamai')" class="w-full bg-blue-600/20 border border-blue-500/50 p-3 rounded-xl flex justify-between items-center mb-4 text-blue-100 font-bold text-sm">
-                    <span><i class="fa-brands fa-telegram mr-2"></i> Join Channel</span> <i class="fa-solid fa-chevron-right"></i>
-                </button>
-                <h3 class="font-bold mb-3 text-sm text-gray-400">Task List</h3>
-                <div id="taskList" class="space-y-3 pb-20"><div class="loader mx-auto"></div></div>
-            </div>
-
-            <div id="tab-refer" class="page hidden">
-                <div class="bg-slate-800 p-6 rounded-xl text-center border border-slate-700">
-                    <i class="fa-solid fa-gift text-4xl text-emerald-500 mb-2"></i>
-                    <h2 class="text-xl font-bold">Refer & Earn</h2>
-                    <p class="text-gray-400 text-sm mb-4">Get Bonus for every friend!</p>
-                    <input id="refLink" readonly class="w-full bg-slate-900 p-3 rounded text-xs text-gray-400 mb-2 text-center" value="...">
-                    <button onclick="copyRef()" class="bg-emerald-600 px-6 py-2 rounded text-sm font-bold">Copy Link</button>
-                    <div class="flex justify-between mt-6 bg-slate-900 p-3 rounded">
-                        <div class="text-center w-1/2 border-r border-slate-700">
-                            <p class="text-xs text-gray-500">Total Ref</p>
-                            <h3 id="totRef" class="font-bold">0</h3>
-                        </div>
-                        <div class="text-center w-1/2">
-                            <p class="text-xs text-gray-500">Earnings</p>
-                            <h3 id="earnRef" class="font-bold text-emerald-400">৳0</h3>
-                        </div>
+        <main>
+            <!-- HOME -->
+            <div id="t-home" class="page">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-800 p-4 rounded border border-slate-700">
+                        <p class="text-xs">Total Users</p>
+                        <h2 id="stUser" class="text-2xl font-bold text-white">0</h2>
                     </div>
+                    <div class="bg-slate-800 p-4 rounded border border-slate-700">
+                        <p class="text-xs">Pending Pay</p>
+                        <h2 id="stPay" class="text-2xl font-bold text-yellow-500">0</h2>
+                    </div>
+                </div>
+                <!-- REFERRAL STATS -->
+                <div class="mt-6 bg-slate-800 p-4 rounded border border-slate-700">
+                    <h3 class="font-bold text-white mb-2">Top Referrers</h3>
+                    <table class="w-full text-xs text-left"><tbody id="refTable"></tbody></table>
                 </div>
             </div>
 
-            <div id="tab-wallet" class="page hidden">
-                <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 mb-4">
-                    <div class="flex gap-2 mb-3">
-                        <button onclick="sM('bkash')" id="b-bkash" class="flex-1 p-2 rounded bg-slate-700 text-sm border border-transparent">bKash</button>
-                        <button onclick="sM('nagad')" id="b-nagad" class="flex-1 p-2 rounded bg-slate-700 text-sm border border-transparent">Nagad</button>
+            <!-- USERS -->
+            <div id="t-users" class="page hidden">
+                <button onclick="loadUsers()" class="bg-blue-600 px-3 py-1 rounded text-white text-xs mb-3">Refresh</button>
+                <div class="overflow-x-auto"><table class="w-full text-xs text-left"><tbody id="userTable"></tbody></table></div>
+            </div>
+
+            <!-- TASKS -->
+            <div id="t-tasks" class="page hidden">
+                <div class="bg-slate-800 p-4 rounded mb-4 border border-slate-700 grid gap-2">
+                    <input id="tt" placeholder="Title" class="bg-slate-900 p-2 rounded">
+                    <input id="tl" placeholder="Link" class="bg-slate-900 p-2 rounded">
+                    <div class="flex gap-2">
+                        <input id="tr" type="number" placeholder="Reward" class="bg-slate-900 p-2 rounded w-1/2">
+                        <input id="tm" type="number" placeholder="Timer (Sec)" class="bg-slate-900 p-2 rounded w-1/2">
                     </div>
-                    <input id="wNum" type="number" placeholder="Number" class="w-full bg-slate-900 p-3 rounded mb-2 text-sm text-white">
-                    <input id="wAmt" type="number" placeholder="Amount" class="w-full bg-slate-900 p-3 rounded mb-4 text-sm text-white">
-                    <button onclick="doW()" class="w-full bg-emerald-600 py-3 rounded font-bold shadow-lg">Withdraw</button>
+                    <button onclick="addTask()" class="bg-emerald-600 text-white p-2 rounded">Add Task</button>
                 </div>
-                <div id="wHist" class="space-y-2 text-xs"></div>
+                <div id="taskList" class="space-y-2"></div>
+            </div>
+
+            <!-- WITHDRAWS -->
+            <div id="t-withdraw" class="page hidden">
+                <table class="w-full text-left text-xs"><tbody id="wTable"></tbody></table>
+            </div>
+
+            <!-- SETTINGS -->
+            <div id="t-settings" class="page hidden">
+                <label class="text-xs">Marquee Notice</label>
+                <input id="setNot" class="w-full bg-slate-800 p-3 rounded mb-3 border border-slate-700 text-white">
+                <button onclick="saveSet()" class="bg-emerald-600 text-white px-4 py-2 rounded">Save</button>
             </div>
         </main>
-
-        <nav class="fixed bottom-0 w-full bg-slate-900 border-t border-slate-800 flex justify-around py-3">
-            <button onclick="nav('home')" class="text-emerald-500 flex flex-col items-center"><i class="fa-solid fa-house mb-1"></i><span class="text-[10px]">Home</span></button>
-            <button onclick="nav('refer')" class="text-gray-500 flex flex-col items-center"><i class="fa-solid fa-users mb-1"></i><span class="text-[10px]">Refer</span></button>
-            <button onclick="nav('wallet')" class="text-gray-500 flex flex-col items-center"><i class="fa-solid fa-wallet mb-1"></i><span class="text-[10px]">Wallet</span></button>
-        </nav>
     </div>
 
-    <!-- FIREBASE & LOGIC -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script>
-        // ⚠️⚠️ আপনার ফায়ারবেস কনফিগ এখানে বসান ⚠️⚠️
+        // ⚠️⚠️ Firebase Config Here ⚠️⚠️
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT.appspot.com",
-            messagingSenderId: "SENDER_ID",
-            appId: "APP_ID"
-        };
+            apiKey: "AIzaSyCgVhOPt9w6UhZWop6QLmq7AO3cpZtsQmI",
+            authDomain: "dollarkamai1.firebaseapp.com",
+            projectId: "dollarkamai1",
+            storageBucket: "dollarkamai1.firebasestorage.app",
+            messagingSenderId: "278970320528",
+            appId: "1:278970320528:web:30d08c635ed9e623f1ba15"
+        };
         
         firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
         const db = firebase.firestore();
-        const tg = window.Telegram.WebApp;
-        let user, sMethod = 'bkash';
 
-        document.addEventListener('DOMContentLoaded', async ()=>{
-            tg.expand();
-            const u = tg.initDataUnsafe.user || {id: 111, first_name: 'Test'};
-            const ref = db.collection('users').doc(u.id.toString());
-            const snap = await ref.get();
-            
-            if(snap.exists) user = snap.data();
-            else {
-                const sp = tg.initDataUnsafe.start_param;
-                user = {id: u.id, name: u.first_name, balance: 0, refCount: 0, refEarn: 0};
-                await ref.set(user);
-                if(sp && sp!=u.id) db.collection('users').doc(sp).update({
-                    balance: firebase.firestore.FieldValue.increment(3),
-                    refCount: firebase.firestore.FieldValue.increment(1),
-                    refEarn: firebase.firestore.FieldValue.increment(3)
-                });
-            }
-            
-            // Load Settings
-            db.collection('settings').doc('config').get().then(d => {
-                if(d.exists && d.data().notice) document.getElementById('mqNotice').innerText = d.data().notice;
-            });
+        function doLogin(e){ e.preventDefault(); auth.signInWithEmailAndPassword(document.getElementById('em').value, document.getElementById('pw').value); }
+        auth.onAuthStateChanged(u=>{ if(u){ document.getElementById('login').classList.add('hidden'); document.getElementById('dash').classList.remove('hidden'); init(); } });
 
-            upUI(); loadTask();
-            document.getElementById('app').classList.remove('hidden');
-        });
-
-        function upUI(){
-            document.getElementById('uName').innerText = user.name;
-            document.getElementById('uId').innerText = user.id;
-            document.getElementById('bal').innerText = user.balance.toFixed(2);
-            document.getElementById('totRef').innerText = user.refCount;
-            document.getElementById('earnRef').innerText = '৳'+user.refEarn;
-            document.getElementById('refLink').value = `https://t.me/DollarKamai_bot?start=${user.id}`;
+        function tab(t){ document.querySelectorAll('.page').forEach(e=>e.classList.add('hidden')); document.getElementById('t-'+t).classList.remove('hidden'); if(t=='users') loadUsers(); if(t=='tasks') loadTasks(); if(t=='withdraw') loadW(); }
+        
+        function init(){
+            db.collection('users').get().then(s=>document.getElementById('stUser').innerText=s.size);
+            db.collection('withdrawals').where('status','==','pending').onSnapshot(s=>document.getElementById('stPay').innerText=s.size);
+            loadRefs();
+            db.collection('settings').doc('config').get().then(d=>{ if(d.exists) document.getElementById('setNot').value = d.data().notice||''; });
         }
 
-        async function loadTask(){
-            const d = document.getElementById('taskList'); d.innerHTML='';
-            const s = await db.collection('tasks').where('active','==',true).get();
-            s.forEach(doc=>{
-                const t=doc.data();
-                d.innerHTML += `<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
-                    <div><h4 class="font-bold text-sm">${t.title}</h4><span class="text-[10px] text-yellow-400">⏱️ ${t.timer||10}s</span></div>
-                    <button onclick="goTask('${doc.id}', '${t.link}', ${t.reward}, ${t.timer||10})" class="bg-emerald-600 px-4 py-2 rounded text-xs font-bold">৳${t.reward}</button>
-                </div>`;
-            });
+        async function loadRefs(){
+            const t=document.getElementById('refTable'); t.innerHTML='';
+            const s=await db.collection('users').orderBy('refCount','desc').limit(10).get();
+            s.forEach(d=>{ const u=d.data(); if(u.refCount>0) t.innerHTML+=`<tr class="border-b border-slate-700"><td class="p-2">${u.name}</td><td class="p-2 font-bold text-emerald-400">${u.refCount} Refs</td></tr>`; });
         }
 
-        function goTask(id, link, rew, time){
-            window.open(link, '_blank');
-            const m = document.getElementById('timerModal');
-            const c = document.getElementById('countdown');
-            m.classList.add('active');
-            let t = time;
-            c.innerText = t+'s';
-            const i = setInterval(async()=>{
-                t--; c.innerText = t+'s';
-                if(t<=0){
-                    clearInterval(i); m.classList.remove('active');
-                    await db.collection('users').doc(user.id.toString()).update({balance: firebase.firestore.FieldValue.increment(rew)});
-                    user.balance+=rew; upUI();
-                }
-            }, 1000);
+        async function loadUsers(){
+            const t=document.getElementById('userTable'); t.innerHTML='Loading...';
+            const s=await db.collection('users').limit(50).get(); t.innerHTML='';
+            s.forEach(d=>{ const u=d.data(); t.innerHTML+=`<tr class="border-b border-slate-700"><td class="p-2">${u.name}<br><span class="text-[10px] text-gray-500">${u.id}</span></td><td class="p-2 font-bold">৳${u.balance}</td><td class="p-2"><button onclick="edB('${d.id}')" class="text-blue-400">Edit</button></td></tr>`; });
+        }
+        async function edB(id){ const n=prompt('New Balance'); if(n) { await db.collection('users').doc(id).update({balance:Number(n)}); loadUsers(); }}
+
+        async function loadTasks(){
+            const d=document.getElementById('taskList'); d.innerHTML='';
+            const s=await db.collection('tasks').where('active','==',true).get();
+            s.forEach(doc=>{ const t=doc.data(); d.innerHTML+=`<div class="bg-slate-800 p-2 rounded flex justify-between border border-slate-700 items-center"><div><b>${t.title}</b> <span class="text-xs text-yellow-400">(${t.timer}s)</span></div><button onclick="delT('${doc.id}')" class="text-red-500">Del</button></div>`; });
+        }
+        async function addTask(){
+            const t=document.getElementById('tt').value, l=document.getElementById('tl').value, r=document.getElementById('tr').value, m=document.getElementById('tm').value;
+            if(t&&r) { await db.collection('tasks').add({title:t, link:l, reward:Number(r), timer:Number(m)||10, active:true}); loadTasks(); document.getElementById('tt').value=''; }
+        }
+        async function delT(id){ if(confirm('Del?')) { await db.collection('tasks').doc(id).update({active:false}); loadTasks(); }}
+
+        async function loadW(){
+            const t=document.getElementById('wTable'); t.innerHTML='';
+            const s=await db.collection('withdrawals').where('status','==','pending').get();
+            s.forEach(doc=>{ const w=doc.data(); t.innerHTML+=`<tr class="border-b border-slate-700"><td class="p-2">${w.userName}<br>${w.number} (${w.method})</td><td class="p-2 font-bold">৳${w.amount}</td><td class="p-2"><button onclick="pW('${doc.id}','paid')" class="text-green-500 mr-2">Pay</button><button onclick="pW('${doc.id}','rejected',${w.amount},'${w.userId}')" class="text-red-500">Refund</button></td></tr>`; });
+        }
+        async function pW(id,st,amt,uid){
+            if(!confirm(st))return; const b=db.batch();
+            b.update(db.collection('withdrawals').doc(id),{status:st});
+            if(st=='rejected') b.update(db.collection('users').doc(uid),{balance:firebase.firestore.FieldValue.increment(amt)});
+            await b.commit(); loadW();
         }
 
-        function sM(m){ sMethod=m; document.querySelectorAll('#b-bkash, #b-nagad').forEach(b=>b.classList.remove('border-emerald-500','text-emerald-500')); document.getElementById('b-'+m).classList.add('border-emerald-500','text-emerald-500'); }
-        async function doW(){
-            const n=document.getElementById('wNum').value, a=Number(document.getElementById('wAmt').value);
-            if(!n || a<50 || a>user.balance) return alert('Invalid Request');
-            await db.collection('withdrawals').add({userId:user.id, userName:user.name, number:n, amount:a, method:sMethod, status:'pending', date: new Date()});
-            await db.collection('users').doc(user.id.toString()).update({balance: firebase.firestore.FieldValue.increment(-a)});
-            user.balance-=a; upUI(); loadHist(); alert('Success');
-        }
-        async function loadHist(){
-            const d=document.getElementById('wHist'); d.innerHTML='';
-            const s=await db.collection('withdrawals').where('userId','==',user.id).orderBy('date','desc').limit(5).get();
-            s.forEach(r=>{ const t=r.data(); d.innerHTML+=`<div class="bg-slate-800 p-2 rounded flex justify-between"><span>${t.method}-${t.amount}</span><span class="${t.status=='paid'?'text-green-500':'text-yellow-500'} uppercase">${t.status}</span></div>` });
-        }
-        function nav(p){
-            document.querySelectorAll('.page').forEach(e=>e.classList.add('hidden'));
-            document.getElementById('tab-'+p).classList.remove('hidden');
-            if(p=='wallet') loadHist();
-        }
-        function copyRef(){ navigator.clipboard.writeText(document.getElementById('refLink').value); alert('Copied'); }
+        async function saveSet(){ await db.collection('settings').doc('config').set({notice:document.getElementById('setNot').value},{merge:true}); alert('Saved'); }
     </script>
 </body>
 </html>
