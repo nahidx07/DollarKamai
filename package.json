@@ -1,7 +1,8 @@
 {
-  "name": "dollarkamai",
+  "name": "dollar-kamai",
+  "version": "1.0.0",
+  "type": "module",
   "dependencies": {
-    "telegraf": "^4.12.2",
-    "firebase-admin": "^11.5.0"
+    "node-fetch": "^3.3.2"
   }
 }
