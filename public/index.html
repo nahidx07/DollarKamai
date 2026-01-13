@@ -15,150 +15,191 @@
         .loader { border: 3px solid #1e293b; border-top: 3px solid #10b981; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .task-done { opacity: 0.5; filter: grayscale(100%); pointer-events: none; order: 9999; }
+        /* Smooth Marquee */
+        .marquee-container { overflow: hidden; white-space: nowrap; }
     </style>
 </head>
 <body class="pb-24 select-none bg-slate-900">
 
     <!-- Loading Screen -->
     <div id="splash" class="fixed inset-0 bg-slate-900 z-[100] flex flex-col items-center justify-center">
-        <i class="fa-solid fa-sack-dollar text-6xl text-emerald-500 mb-4 animate-bounce"></i>
-        <h1 class="text-2xl font-bold text-white">ডলার কামাই</h1>
-        <p id="loadingText" class="text-gray-400 text-sm mt-2">যাচাই করা হচ্ছে...</p>
-    </div>
-
-    <!-- MAINTENANCE / BLOCK SCREEN -->
-    <div id="blockScreen" class="fixed inset-0 bg-slate-900 z-[90] hidden flex flex-col items-center justify-center p-6 text-center">
-        <i id="blockIcon" class="fa-solid fa-triangle-exclamation text-6xl text-yellow-500 mb-4"></i>
-        <h1 id="blockTitle" class="text-2xl font-bold text-white">Maintenance Mode</h1>
-        <p id="blockMsg" class="text-gray-400 mt-2 text-sm">অ্যাপের কাজ চলছে। কিছুক্ষণ পর চেষ্টা করুন।</p>
-    </div>
-
-    <!-- POPUP NOTIFICATION -->
-    <div id="popupModal" class="modal fixed inset-0 z-[80] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-slate-800 rounded-2xl w-full max-w-sm overflow-hidden border border-slate-700 relative animate-[bounce_1s_ease-in-out]">
-            <button onclick="document.getElementById('popupModal').classList.remove('active')" class="absolute top-2 right-2 bg-black/50 text-white w-8 h-8 rounded-full z-10"><i class="fa-solid fa-xmark"></i></button>
-            <img id="popImg" src="" class="w-full h-40 object-cover hidden">
-            <div class="p-6 text-center">
-                <h2 class="text-xl font-bold text-emerald-400 mb-2">📢 বিশেষ ঘোষণা</h2>
-                <p id="popMsg" class="text-sm text-gray-300">...</p>
-                <button onclick="document.getElementById('popupModal').classList.remove('active')" class="mt-4 bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold w-full">ঠিক আছে</button>
-            </div>
+        <div class="relative">
+            <div class="absolute inset-0 bg-emerald-500 blur-2xl opacity-20 rounded-full"></div>
+            <i class="fa-solid fa-sack-dollar text-6xl text-emerald-500 mb-4 animate-bounce relative z-10"></i>
         </div>
+        <h1 class="text-2xl font-bold text-white tracking-wide">ডলার কামাই</h1>
+        <p id="loadingText" class="text-gray-400 text-sm mt-2">প্রস্তুত হচ্ছে...</p>
     </div>
 
     <!-- TIMER MODAL -->
-    <div id="timerModal" class="modal fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4">
-        <div class="bg-slate-800 p-8 rounded-2xl text-center border border-emerald-500/30 w-full max-w-sm">
-            <div class="w-20 h-20 mx-auto border-4 border-emerald-500 rounded-full flex items-center justify-center mb-4 relative">
-                <i class="fa-solid fa-clock text-2xl text-emerald-500"></i>
+    <div id="timerModal" class="modal fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-slate-800 p-8 rounded-2xl text-center border border-emerald-500/30 w-full max-w-sm shadow-2xl">
+            <div class="w-24 h-24 mx-auto border-4 border-emerald-500 rounded-full flex items-center justify-center mb-6 relative">
+                <i class="fa-solid fa-clock text-3xl text-emerald-500"></i>
                 <div class="absolute inset-0 border-4 border-t-transparent border-emerald-200 rounded-full animate-spin"></div>
             </div>
-            <h2 class="text-xl font-bold text-white mb-2">অপেক্ষা করুন</h2>
+            <h2 class="text-2xl font-bold text-white mb-2">অপেক্ষা করুন</h2>
             <h1 id="countdown" class="text-5xl font-bold text-emerald-400 my-4">0s</h1>
-            <p class="text-xs text-red-400">অ্যাপ ক্লোজ করবেন না!</p>
+            <p class="text-xs text-red-400 bg-red-500/10 py-1 px-3 rounded-full inline-block">অ্যাপ ক্লোজ করবেন না!</p>
         </div>
     </div>
 
     <!-- MAIN APP -->
     <div id="app" class="hidden opacity-0 transition-opacity duration-500">
         <!-- Header -->
-        <header class="bg-gradient-to-b from-slate-800 to-slate-900 p-6 rounded-b-[2rem] shadow-2xl">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <img id="userAvatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="w-12 h-12 rounded-full border-2 border-emerald-500 object-cover bg-slate-700">
+        <header class="bg-gradient-to-b from-slate-800 to-slate-900 p-6 rounded-b-[2.5rem] shadow-2xl border-b border-slate-800">
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-3" onclick="nav('profile')">
+                    <img id="userAvatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="w-12 h-12 rounded-full border-2 border-emerald-500 object-cover bg-slate-700 shadow-lg">
                     <div>
-                        <h2 id="userName" class="font-bold text-sm">User</h2>
-                        <span class="text-[10px] text-gray-400 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">ID: <span id="userId">...</span></span>
+                        <h2 id="userName" class="font-bold text-sm truncate w-24">User</h2>
+                        <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">ID: <span id="userId">...</span></span>
                     </div>
                 </div>
                 <div class="text-right">
-                    <p class="text-[10px] text-gray-400 uppercase tracking-wider">ব্যালেন্স</p>
-                    <h1 class="text-2xl font-bold text-white">৳ <span id="balance">0.00</span></h1>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Total Balance</p>
+                    <h1 class="text-3xl font-bold text-white drop-shadow-md">৳ <span id="balance">0.00</span></h1>
                 </div>
             </div>
-            <!-- Marquee -->
-            <div class="mt-6 bg-slate-800/50 border border-slate-700 rounded-lg p-2 flex items-center gap-2 overflow-hidden">
-                <div class="bg-emerald-500/10 p-1.5 rounded text-emerald-400"><i class="fa-solid fa-bullhorn text-xs"></i></div>
-                <marquee id="noticeText" direction="left" scrollamount="4" class="text-xs text-gray-300 font-medium">Loading...</marquee>
+            
+            <!-- Marquee Notice -->
+            <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-2.5 flex items-center gap-3 shadow-inner">
+                <div class="bg-emerald-500/20 p-1.5 rounded-lg text-emerald-400 animate-pulse"><i class="fa-solid fa-bullhorn text-xs"></i></div>
+                <div class="marquee-container w-full overflow-hidden">
+                    <marquee id="noticeText" direction="left" scrollamount="5" class="text-xs text-gray-200 font-medium">
+                        Welcome to Dollar Kamai...
+                    </marquee>
+                </div>
             </div>
         </header>
 
-        <main class="p-5">
+        <main class="p-5 pb-24">
             <!-- HOME TAB -->
             <div id="home-page" class="page-section">
-                <button onclick="openLink('https://t.me/DollarKamai')" class="w-full bg-blue-600/10 border border-blue-500/30 p-3 rounded-xl flex items-center justify-between mb-5 group hover:bg-blue-600/20 transition">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-blue-500 p-2 rounded-lg text-white"><i class="fa-brands fa-telegram"></i></div>
+                <button onclick="openLink('https://t.me/DollarKamai')" class="w-full bg-gradient-to-r from-blue-600/20 to-blue-900/20 border border-blue-500/30 p-4 rounded-2xl flex items-center justify-between mb-6 group hover:border-blue-500/60 transition shadow-lg">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-blue-600 p-2.5 rounded-xl text-white shadow-lg shadow-blue-900/50"><i class="fa-brands fa-telegram text-xl"></i></div>
                         <div class="text-left">
-                            <h4 class="font-bold text-sm text-blue-100">জয়েন চ্যানেল</h4>
-                            <p class="text-[10px] text-blue-300">আপডেট পেতে জয়েন করুন</p>
+                            <h4 class="font-bold text-sm text-blue-100">অফিসিয়াল চ্যানেল</h4>
+                            <p class="text-[10px] text-blue-300">জয়েন করে আপডেট থাকুন</p>
                         </div>
                     </div>
-                    <i class="fa-solid fa-chevron-right text-blue-400"></i>
+                    <i class="fa-solid fa-chevron-right text-blue-400 group-hover:translate-x-1 transition"></i>
                 </button>
-                <h3 class="font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-500"></i> টাস্ক লিস্ট</h3>
-                <div id="taskList" class="flex flex-col gap-3 pb-20"><div class="loader mx-auto mt-10"></div></div>
+
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-layer-group text-emerald-500"></i> টাস্ক লিস্ট</h3>
+                    <span class="text-xs text-gray-500 bg-slate-800 px-2 py-1 rounded-lg">Realtime</span>
+                </div>
+                <div id="taskList" class="flex flex-col gap-3"><div class="loader mx-auto mt-10"></div></div>
             </div>
 
-            <!-- LEADERBOARD TAB (NEW) -->
+            <!-- LEADERBOARD TAB -->
             <div id="leader-page" class="page-section hidden">
-                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 text-center mb-4">
-                    <i class="fa-solid fa-trophy text-4xl text-yellow-400 mb-2"></i>
-                    <h2 class="text-xl font-bold text-white">Top 20 Earners</h2>
-                    <p class="text-xs text-gray-400">সর্বোচ্চ ইনকামকারী মেম্বার</p>
+                <div class="bg-gradient-to-br from-yellow-500/20 to-orange-500/10 p-6 rounded-2xl border border-yellow-500/30 text-center mb-6 shadow-lg">
+                    <i class="fa-solid fa-trophy text-5xl text-yellow-400 mb-2 drop-shadow-lg"></i>
+                    <h2 class="text-xl font-bold text-white">Top 20 Leaders</h2>
+                    <p class="text-xs text-gray-300">সেরা ইনকামকারীদের তালিকা</p>
                 </div>
-                <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+                <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-xl">
                     <table class="w-full text-left text-sm text-gray-400">
-                        <thead class="bg-slate-700 text-white text-xs uppercase font-bold"><tr><th class="p-3">Rank</th><th class="p-3">User</th><th class="p-3 text-right">Balance</th></tr></thead>
+                        <thead class="bg-slate-700 text-gray-200 text-xs uppercase font-bold">
+                            <tr>
+                                <th class="p-4">Rank</th>
+                                <th class="p-4">User Info</th>
+                                <th class="p-4 text-right">Earning</th>
+                            </tr>
+                        </thead>
                         <tbody id="leaderList" class="divide-y divide-slate-700"></tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- PROFILE EDIT TAB -->
+            <div id="profile-page" class="page-section hidden">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-user-pen text-emerald-500"></i> প্রোফাইল আপডেট</h2>
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg">
+                    <div class="text-center mb-6">
+                        <img id="editAvatar" src="" class="w-20 h-20 rounded-full mx-auto border-4 border-emerald-500 bg-slate-700">
+                        <p class="text-xs text-gray-500 mt-2">Telegram Profile Photo</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-xs text-gray-400 font-bold ml-1">আপনার নাম</label>
+                            <input id="editName" type="text" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3 text-white text-sm outline-none focus:border-emerald-500 transition">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400 font-bold ml-1">মোবাইল নাম্বার</label>
+                            <input id="editPhone" type="number" placeholder="017xxxxxxxx" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3 text-white text-sm outline-none focus:border-emerald-500 transition">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400 font-bold ml-1">ইমেইল এড্রেস</label>
+                            <input id="editEmail" type="email" placeholder="example@gmail.com" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3 text-white text-sm outline-none focus:border-emerald-500 transition">
+                        </div>
+                        <button onclick="saveProfile()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-bold shadow-lg shadow-emerald-900/50 transition">তথ্য আপডেট করুন</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- REFER TAB -->
             <div id="refer-page" class="page-section hidden">
-                <div class="bg-slate-800 p-6 rounded-2xl text-center border border-slate-700">
-                    <i class="fa-solid fa-gift text-5xl text-emerald-500 mb-4 animate-bounce block"></i>
+                <div class="bg-slate-800 p-6 rounded-2xl text-center border border-slate-700 shadow-xl">
+                    <img src="https://cdn-icons-png.flaticon.com/512/8832/8832108.png" class="w-20 mx-auto mb-4 animate-bounce">
                     <h2 class="text-xl font-bold mb-2">রেফার করুন</h2>
-                    <p class="text-gray-400 text-sm mb-4">বোনাস: <span class="text-emerald-400 font-bold">৳3</span></p>
-                    <div class="bg-slate-900 p-3 rounded-lg flex items-center gap-2 border border-slate-600 mb-4">
-                        <input id="refLink" readonly class="bg-transparent text-xs text-gray-300 w-full outline-none" value="Loading...">
-                        <button onclick="copyRef()" class="text-emerald-500 font-bold text-xs uppercase"><i class="fa-regular fa-copy text-lg"></i></button>
+                    <p class="text-gray-400 text-sm mb-6">বোনাস: <span class="text-emerald-400 font-bold text-lg">৳3</span></p>
+                    
+                    <div class="bg-slate-900 p-3 rounded-xl flex items-center gap-2 border border-slate-600 mb-6">
+                        <input id="refLink" readonly class="bg-transparent text-xs text-gray-300 w-full outline-none font-mono" value="Loading...">
+                        <button onclick="copyRef()" class="bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white p-2 rounded-lg transition"><i class="fa-regular fa-copy text-lg"></i></button>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-slate-700/30 p-3 rounded-xl"><p class="text-xs text-gray-400">Total Ref</p><h3 id="totalRef" class="text-xl font-bold mt-1">0</h3></div>
-                        <div class="bg-slate-700/30 p-3 rounded-xl"><p class="text-xs text-gray-400">Earnings</p><h3 id="refEarn" class="text-xl font-bold mt-1 text-emerald-400">৳0</h3></div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-700/30 p-4 rounded-2xl border border-slate-700">
+                            <p class="text-xs text-gray-400">Total Ref</p>
+                            <h3 id="totalRef" class="text-2xl font-bold mt-1 text-white">0</h3>
+                        </div>
+                        <div class="bg-slate-700/30 p-4 rounded-2xl border border-slate-700">
+                            <p class="text-xs text-gray-400">Earnings</p>
+                            <h3 id="refEarn" class="text-2xl font-bold mt-1 text-emerald-400">৳0</h3>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- WITHDRAW TAB -->
             <div id="withdraw-page" class="page-section hidden">
-                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-lg">
-                    <h2 class="text-sm font-bold text-gray-400 mb-3 uppercase">পেমেন্ট মেথড</h2>
-                    <div class="grid grid-cols-2 gap-3 mb-4">
-                        <button onclick="setMethod('bkash')" id="btn-bkash" class="bg-slate-700 p-3 rounded-xl border border-transparent focus:border-pink-500 text-sm font-bold transition">bKash</button>
-                        <button onclick="setMethod('nagad')" id="btn-nagad" class="bg-slate-700 p-3 rounded-xl border border-transparent focus:border-orange-500 text-sm font-bold transition">Nagad</button>
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg mb-6">
+                    <h2 class="text-sm font-bold text-gray-400 mb-4 uppercase tracking-wider">পেমেন্ট মেথড</h2>
+                    <div class="grid grid-cols-2 gap-3 mb-5">
+                        <button onclick="setMethod('bkash')" id="btn-bkash" class="bg-slate-700 p-3 rounded-xl border border-transparent focus:border-pink-500 text-sm font-bold transition flex items-center justify-center gap-2">bKash</button>
+                        <button onclick="setMethod('nagad')" id="btn-nagad" class="bg-slate-700 p-3 rounded-xl border border-transparent focus:border-orange-500 text-sm font-bold transition flex items-center justify-center gap-2">Nagad</button>
                     </div>
-                    <div class="space-y-3">
-                        <input type="number" id="wNum" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3 text-white text-sm outline-none" placeholder="Number (017...)">
-                        <input type="number" id="wAmount" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3 text-white text-sm outline-none" placeholder="Amount (Tk)">
+                    <div class="space-y-4">
+                        <input type="number" id="wNum" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3.5 text-white text-sm outline-none focus:border-emerald-500 transition" placeholder="Mobile Number (017...)">
+                        <input type="number" id="wAmount" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3.5 text-white text-sm outline-none focus:border-emerald-500 transition" placeholder="Amount (Min: 50)">
                     </div>
-                    <button onclick="withdraw()" class="w-full bg-emerald-600 hover:bg-emerald-500 mt-4 py-3 rounded-xl font-bold shadow-lg">উইথড্র করুন</button>
+                    <button onclick="withdraw()" class="w-full bg-emerald-600 hover:bg-emerald-500 mt-6 py-3.5 rounded-xl font-bold shadow-lg shadow-emerald-900/50 transition transform active:scale-95">উইথড্র করুন</button>
                 </div>
-                <div class="mt-6"><h3 class="font-bold text-sm text-gray-400 mb-3">হিস্টোরি</h3><div id="historyList" class="space-y-2"></div></div>
+                <div class="flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-clock-rotate-left text-gray-400"></i>
+                    <h3 class="font-bold text-sm text-gray-300">লেনদেন ইতিহাস</h3>
+                </div>
+                <div id="historyList" class="space-y-3"></div>
             </div>
         </main>
 
-        <nav class="fixed bottom-0 w-full bg-slate-900/95 backdrop-blur-md border-t border-slate-800 flex justify-around py-2 z-40 pb-safe">
-            <button onclick="nav('home')" class="nav-btn text-emerald-500 flex flex-col items-center p-2 w-16"><i class="fa-solid fa-house text-lg mb-1"></i> <span class="text-[10px]">হোম</span></button>
-            <button onclick="nav('leader')" class="nav-btn text-gray-500 flex flex-col items-center p-2 w-16"><i class="fa-solid fa-trophy text-lg mb-1"></i> <span class="text-[10px]">টপ</span></button>
-            <button onclick="nav('refer')" class="nav-btn text-gray-500 flex flex-col items-center p-2 w-16"><i class="fa-solid fa-users text-lg mb-1"></i> <span class="text-[10px]">রেফার</span></button>
-            <button onclick="nav('withdraw')" class="nav-btn text-gray-500 flex flex-col items-center p-2 w-16"><i class="fa-solid fa-wallet text-lg mb-1"></i> <span class="text-[10px]">ওয়ালেট</span></button>
+        <!-- Navigation Bar -->
+        <nav class="fixed bottom-0 w-full bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 flex justify-around py-3 z-40 pb-safe">
+            <button onclick="nav('home')" class="nav-btn text-emerald-500 flex flex-col items-center w-16 transition-all transform active:scale-90"><i class="fa-solid fa-house text-xl mb-1"></i> <span class="text-[10px] font-medium">হোম</span></button>
+            <button onclick="nav('leader')" class="nav-btn text-gray-500 flex flex-col items-center w-16 transition-all transform active:scale-90"><i class="fa-solid fa-trophy text-xl mb-1"></i> <span class="text-[10px] font-medium">টপ</span></button>
+            <button onclick="nav('refer')" class="nav-btn text-gray-500 flex flex-col items-center w-16 transition-all transform active:scale-90"><i class="fa-solid fa-users text-xl mb-1"></i> <span class="text-[10px] font-medium">রেফার</span></button>
+            <button onclick="nav('withdraw')" class="nav-btn text-gray-500 flex flex-col items-center w-16 transition-all transform active:scale-90"><i class="fa-solid fa-wallet text-xl mb-1"></i> <span class="text-[10px] font-medium">ওয়ালেট</span></button>
         </nav>
     </div>
 
-    <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-xl border border-slate-600 text-sm hidden z-[70]">Message</div>
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl border border-slate-600 text-sm hidden z-[100] whitespace-nowrap">Message</div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -181,57 +222,26 @@
         document.addEventListener("DOMContentLoaded", async () => {
             try {
                 tg.expand();
-                const tgUser = tg.initDataUnsafe.user || { id: 123456, first_name: "Demo", username: "User" };
-                
-                // 🛡️ SECURITY CHECKS START 🛡️
-                
-                // 1. VPN Check (Timezone)
-                const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-                if(!tz.includes('Dhaka') && !tz.includes('Asia/Dhaka')) {
-                    showBlock('VPN Detected!', 'ভিপিএন অফ করে অ্যাপে প্রবেশ করুন।', 'fa-globe');
-                    document.getElementById('splash').style.display='none';
-                    return;
-                }
-
-                // 2. One Device Check (LocalStorage)
-                const storedID = localStorage.getItem('dk_uid');
-                if(storedID && storedID != tgUser.id) {
-                    showBlock('Multiple Accounts!', 'এক ডিভাইসে একাধিক একাউন্ট নিষিদ্ধ।', 'fa-mobile-screen');
-                    document.getElementById('splash').style.display='none';
-                    return;
-                }
-                localStorage.setItem('dk_uid', tgUser.id);
-
-                // 3. Maintenance Check (From DB)
-                const configSnap = await db.collection('settings').doc('config').get();
-                const config = configSnap.exists ? configSnap.data() : {};
-                
-                if(config.maintenance) {
-                    showBlock('Maintenance Mode', 'অ্যাপের কাজ চলছে, কিছুক্ষণ পর চেষ্টা করুন।', 'fa-screwdriver-wrench');
-                    document.getElementById('splash').style.display='none';
-                    return;
-                }
-
-                // 🛡️ SECURITY CHECKS END 🛡️
-
-                // User Logic
+                const tgUser = tg.initDataUnsafe.user || { id: 123456, first_name: "Demo", username: "User", photo_url: "" };
                 const uRef = db.collection('users').doc(tgUser.id.toString());
                 const uSnap = await uRef.get();
 
                 if(uSnap.exists) {
                     user = uSnap.data();
-                    if(user.isBanned) { showBlock('Account Banned', 'অস্বাভাবিক কার্যক্রমের জন্য একাউন্ট ব্যান।', 'fa-ban'); document.getElementById('splash').style.display='none'; return; }
+                    if(user.isBanned) return document.body.innerHTML = '<div class="h-screen flex items-center justify-center text-red-500 font-bold bg-slate-900">ACCOUNT BANNED</div>';
+                    // Update photo if changed
                     if(tgUser.photo_url && user.photo !== tgUser.photo_url) uRef.update({ photo: tgUser.photo_url });
                 } else {
                     const sp = tg.initDataUnsafe.start_param;
                     user = { id: tgUser.id, name: tgUser.first_name, photo: tgUser.photo_url||'', balance: 0, refCount: 0, refEarn: 0, isBanned: false };
                     await uRef.set(user);
-                    if(sp && sp!=user.id) db.collection('users').doc(sp).update({balance: firebase.firestore.FieldValue.increment(3), refCount: firebase.firestore.FieldValue.increment(1), refEarn: firebase.firestore.FieldValue.increment(3)});
+                    if(sp && sp!=user.id) db.collection('users').doc(sp).update({balance: firebase.firestore.FieldValue.increment(3), refCount: firebase.firestore.FieldValue.increment(1)});
                 }
 
-                // Apply Settings
-                if(config.notice) document.getElementById('noticeText').innerText = config.notice;
-                if(config.popupText) showPopup(config.popupText, config.popupImg);
+                try {
+                    const s = await db.collection('settings').doc('config').get();
+                    if(s.exists && s.data().notice) document.getElementById('noticeText').innerText = s.data().notice;
+                } catch(e){}
 
                 updateUI();
                 await loadTasks();
@@ -240,21 +250,8 @@
                 document.getElementById('app').classList.remove('hidden');
                 document.getElementById('app').classList.remove('opacity-0');
 
-            } catch (error) { alert("App Error: " + error.message); }
+            } catch (error) { alert("Error: " + error.message); }
         });
-
-        function showBlock(title, msg, icon) {
-            document.getElementById('blockTitle').innerText = title;
-            document.getElementById('blockMsg').innerText = msg;
-            document.getElementById('blockIcon').className = `fa-solid ${icon} text-6xl text-yellow-500 mb-4`;
-            document.getElementById('blockScreen').classList.remove('hidden');
-        }
-
-        function showPopup(msg, img) {
-            document.getElementById('popMsg').innerText = msg;
-            if(img) { document.getElementById('popImg').src = img; document.getElementById('popImg').classList.remove('hidden'); }
-            document.getElementById('popupModal').classList.add('active');
-        }
 
         function updateUI() {
             if(!user) return;
@@ -264,7 +261,56 @@
             document.getElementById('totalRef').innerText = user.refCount || 0;
             document.getElementById('refEarn').innerText = '৳ ' + (user.refEarn || 0);
             document.getElementById('refLink').value = `https://t.me/DollarKamai_bot?start=${user.id}`;
-            if(user.photo) document.getElementById('userAvatar').src = user.photo;
+            if(user.photo) {
+                document.getElementById('userAvatar').src = user.photo;
+                document.getElementById('editAvatar').src = user.photo;
+            }
+            // Populate Edit Fields
+            document.getElementById('editName').value = user.name;
+            document.getElementById('editPhone').value = user.phone || '';
+            document.getElementById('editEmail').value = user.email || '';
+        }
+
+        async function saveProfile() {
+            const name = document.getElementById('editName').value;
+            const phone = document.getElementById('editPhone').value;
+            const email = document.getElementById('editEmail').value;
+            
+            if(!name) return showToast("নাম খালি রাখা যাবে না");
+
+            try {
+                await db.collection('users').doc(user.id.toString()).update({
+                    name: name,
+                    phone: phone,
+                    email: email
+                });
+                user.name = name; user.phone = phone; user.email = email;
+                updateUI();
+                showToast("প্রোফাইল আপডেট হয়েছে!");
+            } catch(e) { showToast("Error saving profile"); }
+        }
+
+        async function loadLeaderboard() {
+            const l = document.getElementById('leaderList'); l.innerHTML = '<tr><td colspan="3" class="p-4 text-center">Loading...</td></tr>';
+            const s = await db.collection('users').orderBy('balance','desc').limit(20).get();
+            l.innerHTML = '';
+            let rank = 1;
+            s.forEach(d => { 
+                const u = d.data(); 
+                const pic = u.photo || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                l.innerHTML+=`
+                <tr class="border-b border-slate-700/50 hover:bg-slate-800/50 transition">
+                    <td class="p-4">
+                        ${rank==1?'🥇':(rank==2?'🥈':(rank==3?'🥉':`<span class="bg-slate-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">${rank}</span>`))}
+                    </td>
+                    <td class="p-4 flex items-center gap-3">
+                        <img src="${pic}" class="w-8 h-8 rounded-full border border-slate-600 bg-slate-700">
+                        <div><p class="text-sm font-bold text-white">${u.name}</p></div>
+                    </td>
+                    <td class="p-4 text-right font-bold text-emerald-400">৳${u.balance.toFixed(0)}</td>
+                </tr>`;
+                rank++;
+            });
         }
 
         async function loadTasks() {
@@ -275,18 +321,10 @@
             let p = '', d = '';
             tasks.forEach(doc => {
                 const t = doc.data(); const isDone = done.includes(doc.id);
-                const h = `<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center shadow-sm ${isDone?'task-done':''}"><div><h4 class="font-bold text-sm text-gray-200">${t.title}</h4><div class="flex gap-2 mt-1"><span class="text-[10px] bg-slate-700 px-2 rounded text-gray-400">⏱️ ${t.timer||10}s</span><span class="text-[10px] text-emerald-400">৳${t.reward}</span></div></div>${isDone?'<button class="bg-slate-700 text-gray-500 px-4 py-2 rounded-lg text-xs font-bold">Done</button>':`<button onclick="startTask('${doc.id}','${t.link}',${t.reward},${t.timer||10})" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-xs font-bold">Start</button>`}</div>`;
+                const h = `<div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 flex justify-between items-center shadow-md ${isDone?'task-done':''}"><div><h4 class="font-bold text-sm text-gray-200">${t.title}</h4><div class="flex gap-2 mt-1"><span class="text-[10px] bg-slate-700 px-2 py-0.5 rounded text-gray-400">⏱️ ${t.timer||10}s</span><span class="text-[10px] text-emerald-400 font-bold">৳${t.reward}</span></div></div>${isDone?'<button class="bg-slate-700 text-gray-500 px-4 py-2 rounded-xl text-xs font-bold shadow-inner">Done</button>':`<button onclick="startTask('${doc.id}','${t.link}',${t.reward},${t.timer||10})" class="bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-lg hover:bg-emerald-500 transition">Start</button>`}</div>`;
                 if(isDone) d+=h; else p+=h;
             });
-            list.innerHTML = p+d; if(!p&&!d) list.innerHTML='<p class="text-center text-gray-500 py-5">No tasks</p>';
-        }
-
-        async function loadLeaderboard() {
-            const l = document.getElementById('leaderList'); l.innerHTML = '<tr><td colspan="3" class="p-4 text-center">Loading...</td></tr>';
-            const s = await db.collection('users').orderBy('balance','desc').limit(20).get();
-            l.innerHTML = '';
-            let rank = 1;
-            s.forEach(d => { const u = d.data(); l.innerHTML+=`<tr class="border-b border-slate-700"><td class="p-3 text-emerald-400 font-bold">#${rank++}</td><td class="p-3 text-white">${u.name}</td><td class="p-3 text-right font-bold">৳${u.balance.toFixed(2)}</td></tr>`; });
+            list.innerHTML = p+d; if(!p&&!d) list.innerHTML='<p class="text-center text-gray-500 py-10">বর্তমানে কোনো কাজ নেই</p>';
         }
 
         function startTask(tid, link, rew, sec) {
@@ -304,7 +342,6 @@
             }, 1000);
         }
 
-        function openLink(u){ window.open(u, '_blank'); }
         function setMethod(m){ selectedMethod=m; document.querySelectorAll('#btn-bkash, #btn-nagad').forEach(b=>b.classList.remove('border-emerald-500','text-emerald-500')); document.getElementById('btn-'+m).classList.add('border-emerald-500','text-emerald-500'); }
         async function withdraw(){
             const n=document.getElementById('wNum').value, a=Number(document.getElementById('wAmount').value);
@@ -315,11 +352,29 @@
         }
         async function loadHistory(){
             const d=document.getElementById('historyList'); d.innerHTML='';
-            const s=await db.collection('withdrawals').where('userId','==',user.id).orderBy('date','desc').limit(5).get();
-            s.forEach(r=>{ const t=r.data(); d.innerHTML+=`<div class="bg-slate-800 p-2 rounded flex justify-between text-xs border border-slate-700"><span>${t.method}-${t.amount}</span><span class="${t.status=='paid'?'text-green-500':'text-yellow-500'} uppercase">${t.status}</span></div>` });
+            const s=await db.collection('withdrawals').where('userId','==',user.id).orderBy('date','desc').limit(10).get();
+            s.forEach(r=>{ 
+                const t=r.data(); 
+                // Reason Display Logic
+                const reasonHtml = (t.status === 'rejected' && t.reason) ? `<div class="mt-1 text-[10px] text-red-300 bg-red-500/10 p-1 rounded">কারণ: ${t.reason}</div>` : '';
+                
+                d.innerHTML+=`
+                <div class="bg-slate-800 p-3 rounded-xl border border-slate-700 shadow-sm">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-gray-300">${t.method} - ${t.number}</span>
+                        <span class="${t.status=='paid'?'text-green-500':(t.status=='rejected'?'text-red-500':'text-yellow-500')} text-[10px] uppercase font-bold bg-slate-900 px-2 py-0.5 rounded">${t.status}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] text-gray-500">${new Date(t.date.seconds*1000).toLocaleDateString()}</span>
+                        <span class="text-sm font-bold text-white">৳${t.amount}</span>
+                    </div>
+                    ${reasonHtml}
+                </div>`; 
+            });
         }
-        function nav(p){ document.querySelectorAll('.page-section').forEach(e=>e.classList.add('hidden')); document.getElementById(p+'-page').classList.remove('hidden'); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('text-emerald-500')); event.currentTarget.classList.add('text-emerald-500'); if(p=='withdraw') loadHistory(); if(p=='leader') loadLeaderboard(); }
-        function copyRef(){ navigator.clipboard.writeText(document.getElementById('refLink').value); showToast("Copied"); }
+
+        function nav(p){ document.querySelectorAll('.page-section').forEach(e=>e.classList.add('hidden')); document.getElementById(p+'-page').classList.remove('hidden'); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('text-emerald-500')); event.currentTarget.classList.add('text-emerald-500'); if(p=='withdraw') loadHistory(); if(p=='leader') loadLeaderboard(); if(p=='profile') updateUI(); }
+        function copyRef(){ navigator.clipboard.writeText(document.getElementById('refLink').value); showToast("Link Copied!"); }
         function showToast(m){ const t=document.getElementById('toast'); t.innerText=m; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'),3000); }
     </script>
 </body>
