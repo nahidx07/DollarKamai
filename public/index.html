@@ -191,4 +191,18 @@
         }
         function startTask(tid, link, rew, sec) {
             window.open(link, '_blank'); const m=document.getElementById('timerModal'); m.classList.add('active'); let tm=sec; document.getElementById('countdown').innerText=tm+'s';
-            const i=setInterval(async()=>{ tm--; document.getElementById('countdown').innerText=tm+'s'; if(tm<=0){ clearInterval(i); m.classList.remove('active'); const b=db.batch(); const r=db.collection('users').doc(user.id.toString()); b.update(r, {balance: firebase.firestore.FieldValue.increment(rew)}); b.set(r.collection('completed').doc(tid), {date: new Date()}); await b.comm
+            const i=setInterval(async()=>{ tm--; document.getElementById('countdown').innerText=tm+'s'; if(tm<=0){ clearInterval(i); m.classList.remove('active'); const b=db.batch(); const r=db.collection('users').doc(user.id.toString()); b.update(r, {balance: firebase.firestore.FieldValue.increment(rew)}); b.set(r.collection('completed').doc(tid), {date: new Date()}); await b.commit(); user.balance+=rew; updateUI(); loadTasks(); showToast(`+৳${rew} Added!`); } },1000);
+        }
+        async function withdraw(){
+            const n=document.getElementById('wNum').value, a=Number(document.getElementById('wAmount').value);
+            if(!selectedMethod) return showToast("Select Method"); if(a<50 || a>user.balance) return showToast("Invalid Amount");
+            await db.collection('withdrawals').add({userId:user.id, userName:user.name, number:n, amount:a, method:selectedMethod, status:'pending', date:new Date()});
+            await db.collection('users').doc(user.id.toString()).update({balance: firebase.firestore.FieldValue.increment(-a)}); user.balance-=a; updateUI(); loadHistory(); showToast("Success!");
+        }
+        async function loadHistory(){ const d=document.getElementById('historyList'); d.innerHTML=''; const s=await db.collection('withdrawals').where('userId','==',user.id).orderBy('date','desc').limit(5).get(); s.forEach(r=>{ const t=r.data(); const reason=t.status==='rejected'&&t.reason?`<div class="text-[10px] text-red-300 mt-1">Reason: ${t.reason}</div>`:''; d.innerHTML+=`<div class="bg-slate-800 p-3 rounded-xl border border-slate-700 shadow-sm mb-2"><div class="flex justify-between items-center mb-1"><span class="text-xs font-bold text-gray-300">${t.method} - ${t.number}</span><span class="${t.status=='paid'?'text-green-500':(t.status=='rejected'?'text-red-500':'text-yellow-500')} text-[10px] uppercase font-bold bg-slate-900 px-2 py-0.5 rounded">${t.status}</span></div><div class="flex justify-between items-center"><span class="text-[10px] text-gray-500">${new Date(t.date.seconds*1000).toLocaleDateString()}</span><span class="text-sm font-bold text-white">৳${t.amount}</span></div>${reason}</div>`; }); }
+        function nav(p){ document.querySelectorAll('.page-section').forEach(e=>e.classList.add('hidden')); document.getElementById(p+'-page').classList.remove('hidden'); if(p=='withdraw') loadHistory(); if(p=='leader') loadLeaderboard(); if(p=='profile') updateUI(); }
+        function copyRef(){ navigator.clipboard.writeText(document.getElementById('refLink').value); showToast("Copied"); }
+        function showToast(m){ const t=document.getElementById('toast'); t.innerText=m; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'),3000); }
+    </script>
+</body>
+</html>
