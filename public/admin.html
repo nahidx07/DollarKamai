@@ -3,16 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Dollar Kamai</title>
+    <title>Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #cbd5e1; }
-        /* Sidebar Animation */
         .sidebar { transition: transform 0.3s ease-in-out; }
-        .backdrop { transition: opacity 0.3s ease-in-out; }
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 5px; }
     </style>
@@ -22,190 +19,125 @@
     <!-- LOGIN SCREEN -->
     <div id="login" class="fixed inset-0 z-[100] bg-slate-900 flex items-center justify-center">
         <form onsubmit="doLogin(event)" class="bg-slate-800 p-8 rounded-2xl w-full max-w-sm border border-slate-700 shadow-2xl">
-            <div class="text-center mb-8">
-                <i class="fa-solid fa-user-shield text-4xl text-emerald-500 mb-3"></i>
-                <h2 class="text-2xl font-bold text-white">Admin Access</h2>
-            </div>
+            <h2 class="text-2xl font-bold text-white text-center mb-6">Admin Access</h2>
             <div class="space-y-4">
-                <input type="email" id="em" placeholder="admin@email.com" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none focus:border-emerald-500 transition">
-                <input type="password" id="pw" placeholder="Password" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none focus:border-emerald-500 transition">
-                <button class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg shadow-lg transition transform active:scale-95">Login Dashboard</button>
+                <input type="email" id="em" placeholder="Email" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none focus:border-emerald-500">
+                <input type="password" id="pw" placeholder="Password" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none focus:border-emerald-500">
+                <button class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg shadow-lg">Login</button>
             </div>
             <p id="errMsg" class="text-red-500 text-center mt-4 text-xs hidden"></p>
         </form>
     </div>
 
-    <!-- MOBILE BACKDROP (Click to close sidebar) -->
+    <!-- BACKDROP -->
     <div id="backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-40 hidden backdrop-blur-sm md:hidden"></div>
 
     <!-- SIDEBAR -->
     <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-50 w-64 bg-slate-800 border-r border-slate-700 transform -translate-x-full md:translate-x-0 flex flex-col h-full shadow-2xl">
-        <!-- Brand -->
         <div class="h-16 flex items-center px-6 border-b border-slate-700">
-            <i class="fa-solid fa-coins text-emerald-500 text-xl mr-2"></i>
-            <h1 class="text-xl font-bold text-white tracking-wide">Dollar<span class="text-emerald-500">Kamai</span></h1>
-            <button class="md:hidden ml-auto text-gray-400 hover:text-white" onclick="toggleSidebar()">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
+            <h1 class="text-xl font-bold text-white">Dollar<span class="text-emerald-500">Kamai</span></h1>
+            <button class="md:hidden ml-auto text-gray-400" onclick="toggleSidebar()"><i class="fa-solid fa-xmark text-xl"></i></button>
         </div>
-
-        <!-- Menu -->
         <nav class="flex-1 overflow-y-auto p-4 space-y-2">
-            <p class="px-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Main</p>
-            <button onclick="nav('home')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-emerald-400 bg-emerald-500/10 transition">
-                <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
-            </button>
-            
-            <p class="px-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider mt-6 mb-2">Management</p>
-            <button onclick="nav('users')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700 hover:text-white transition">
-                <i class="fa-solid fa-users w-5"></i> Members
-            </button>
-            <button onclick="nav('refer')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700 hover:text-white transition">
-                <i class="fa-solid fa-user-group w-5"></i> Referrals
-            </button>
-            <button onclick="nav('tasks')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700 hover:text-white transition">
-                <i class="fa-solid fa-list-check w-5"></i> Tasks
-            </button>
-            <button onclick="nav('withdraw')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700 hover:text-white transition">
-                <i class="fa-solid fa-wallet w-5"></i> Withdraws
-            </button>
-            
-            <p class="px-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider mt-6 mb-2">System</p>
-            <button onclick="nav('settings')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700 hover:text-white transition">
-                <i class="fa-solid fa-sliders w-5"></i> Settings
-            </button>
+            <button onclick="nav('home')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-emerald-400 bg-emerald-500/10"><i class="fa-solid fa-chart-pie w-5"></i> Dashboard</button>
+            <button onclick="nav('users')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-users w-5"></i> Members</button>
+            <button onclick="nav('refer')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-user-group w-5"></i> Referrals</button>
+            <button onclick="nav('tasks')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-list-check w-5"></i> Tasks</button>
+            <button onclick="nav('withdraw')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-wallet w-5"></i> Withdraws</button>
+            <button onclick="nav('settings')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-sliders w-5"></i> Settings</button>
         </nav>
-
-        <!-- Logout -->
         <div class="p-4 border-t border-slate-700">
-            <button onclick="firebase.auth().signOut()" class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-red-400 bg-red-500/10 hover:bg-red-500 hover:text-white transition">
-                <i class="fa-solid fa-power-off"></i> Logout
-            </button>
+            <button onclick="firebase.auth().signOut()" class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-red-400 bg-red-500/10 hover:bg-red-500 hover:text-white"><i class="fa-solid fa-power-off"></i> Logout</button>
         </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 flex flex-col h-screen overflow-hidden md:ml-64 w-full">
-        <!-- Top Header -->
+    <!-- MAIN -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden md:ml-64 w-full bg-slate-900">
         <header class="h-16 bg-slate-800/80 backdrop-blur border-b border-slate-700 flex items-center justify-between px-4 md:px-8 z-20">
             <div class="flex items-center gap-4">
-                <!-- Hamburger Button (Mobile Only) -->
-                <button onclick="toggleSidebar()" class="md:hidden text-gray-300 hover:text-white p-2 rounded-lg hover:bg-slate-700 transition">
-                    <i class="fa-solid fa-bars text-xl"></i>
-                </button>
-                <h2 id="pageTitle" class="text-lg font-bold text-white">Dashboard Overview</h2>
+                <button onclick="toggleSidebar()" class="md:hidden text-gray-300"><i class="fa-solid fa-bars text-xl"></i></button>
+                <h2 id="pageTitle" class="text-lg font-bold text-white">Dashboard</h2>
             </div>
-            <div class="flex items-center gap-3">
-                <div class="text-right hidden sm:block">
-                    <p class="text-xs font-bold text-white">Super Admin</p>
-                    <p class="text-[10px] text-emerald-500">● Online</p>
-                </div>
-                <div class="w-9 h-9 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center">
-                    <i class="fa-solid fa-user-tie text-gray-400"></i>
-                </div>
-            </div>
+            <p class="text-xs text-emerald-500 font-bold">● Admin Online</p>
         </header>
 
-        <!-- Scrollable Content -->
-        <div class="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-900 scroll-smooth">
-            
-            <!-- 1. DASHBOARD -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">
+            <!-- DASHBOARD -->
             <div id="t-home" class="page block">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg relative overflow-hidden group">
-                        <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:scale-110 transition"><i class="fa-solid fa-users text-6xl"></i></div>
-                        <p class="text-xs text-gray-400 uppercase tracking-wider">Total Users</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                        <p class="text-xs text-gray-400">Total Users</p>
                         <h2 id="stUser" class="text-3xl font-bold text-white mt-1">...</h2>
                     </div>
-                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg relative overflow-hidden group">
-                        <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:scale-110 transition"><i class="fa-solid fa-clock text-6xl text-yellow-500"></i></div>
-                        <p class="text-xs text-gray-400 uppercase tracking-wider">Pending Payouts</p>
+                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                        <p class="text-xs text-gray-400">Pending Pay</p>
                         <h2 id="stPay" class="text-3xl font-bold text-yellow-500 mt-1">...</h2>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. MEMBERS LIST -->
+            <!-- MEMBERS LIST (UPDATED) -->
             <div id="t-users" class="page hidden space-y-4">
                 <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-white">All Members</h3>
-                    <button onclick="loadUsers()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-bold shadow"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
+                    <h3 class="font-bold text-white">Members Management</h3>
+                    <button onclick="loadUsers()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-bold"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
                 </div>
-                <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm text-gray-400">
-                            <thead class="bg-slate-700 text-white text-xs uppercase font-bold"><tr><th class="p-4">User Details</th><th class="p-4">Balance</th><th class="p-4">Actions</th></tr></thead>
-                            <tbody id="userTable" class="divide-y divide-slate-700"></tbody>
-                        </table>
-                    </div>
+                <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-400">
+                        <thead class="bg-slate-700 text-white text-xs uppercase font-bold"><tr><th class="p-4">User</th><th class="p-4">Balance</th><th class="p-4 text-center">Actions</th></tr></thead>
+                        <tbody id="userTable" class="divide-y divide-slate-700"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- 3. REFERRAL STATS -->
+            <!-- REFERRALS -->
             <div id="t-refer" class="page hidden space-y-4">
-                <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-white">Top Referrers</h3>
-                    <button onclick="loadRefs()" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg text-xs font-bold shadow"><i class="fa-solid fa-trophy mr-1"></i> Load Top 20</button>
-                </div>
-                <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm text-gray-400">
-                            <thead class="bg-slate-700 text-white text-xs uppercase font-bold"><tr><th class="p-4">User</th><th class="p-4">Total Ref</th><th class="p-4">Ref Earned</th></tr></thead>
-                            <tbody id="refTable" class="divide-y divide-slate-700"></tbody>
-                        </table>
-                    </div>
+                <button onclick="loadRefs()" class="bg-purple-600 text-white px-4 py-2 rounded-lg text-xs font-bold">Load Top Referrers</button>
+                <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-400">
+                        <thead class="bg-slate-700 text-white text-xs uppercase font-bold"><tr><th class="p-4">User</th><th class="p-4">Refs</th><th class="p-4">Earnings</th></tr></thead>
+                        <tbody id="refTable" class="divide-y divide-slate-700"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- 4. TASK MANAGER -->
+            <!-- TASKS -->
             <div id="t-tasks" class="page hidden space-y-6">
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg">
-                    <h3 class="font-bold text-white mb-4 border-b border-slate-700 pb-2">Create New Task</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <input id="tt" placeholder="Task Title" class="bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-emerald-500">
-                        <input id="tl" placeholder="Target Link" class="bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-emerald-500">
-                        <div class="flex gap-2">
-                            <input id="tr" type="number" placeholder="Reward" class="w-1/2 bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-emerald-500">
-                            <input id="tm" type="number" placeholder="Sec" class="w-1/2 bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-emerald-500">
-                        </div>
-                        <button onclick="addTask()" class="bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold shadow-lg transition">Publish</button>
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                    <h3 class="font-bold text-white mb-4">Add Task</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <input id="tt" placeholder="Title" class="bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm">
+                        <input id="tl" placeholder="Link" class="bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm">
+                        <input id="tr" type="number" placeholder="Reward" class="bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm">
+                        <input id="tm" type="number" placeholder="Sec" class="bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm">
                     </div>
+                    <button onclick="addTask()" class="mt-4 bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold">Publish</button>
                 </div>
                 <div id="taskList" class="space-y-3"></div>
             </div>
 
-            <!-- 5. WITHDRAWALS -->
+            <!-- WITHDRAW -->
             <div id="t-withdraw" class="page hidden space-y-4">
-                <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-white">Withdraw Requests</h3>
-                    <button onclick="loadW()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-xs font-bold shadow"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
-                </div>
-                <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm text-gray-400">
-                            <thead class="bg-slate-700 text-white text-xs uppercase font-bold"><tr><th class="p-4">Requested By</th><th class="p-4">Amount</th><th class="p-4">Action</th></tr></thead>
-                            <tbody id="wTable" class="divide-y divide-slate-700"></tbody>
-                        </table>
-                    </div>
+                <button onclick="loadW()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold">Refresh</button>
+                <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-400">
+                        <thead class="bg-slate-700 text-white text-xs uppercase font-bold"><tr><th class="p-4">Details</th><th class="p-4">Amount</th><th class="p-4">Action</th></tr></thead>
+                        <tbody id="wTable" class="divide-y divide-slate-700"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- 6. SETTINGS -->
+            <!-- SETTINGS -->
             <div id="t-settings" class="page hidden">
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg max-w-2xl">
-                    <h3 class="font-bold text-white mb-4">App Configuration</h3>
-                    <div class="mb-4">
-                        <label class="block text-xs text-gray-400 mb-2 uppercase font-bold">Marquee Notice Text</label>
-                        <textarea id="setNot" rows="3" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-emerald-500"></textarea>
-                    </div>
-                    <button onclick="saveSet()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold shadow-lg">Save Settings</button>
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 max-w-2xl">
+                    <label class="block text-gray-400 mb-2 uppercase font-bold text-xs">Marquee Notice Text</label>
+                    <textarea id="setNot" rows="3" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm"></textarea>
+                    <button onclick="saveSet()" class="mt-4 bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold">Save Settings</button>
                 </div>
             </div>
-
         </div>
     </main>
 
-    <!-- Firebase Scripts -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -221,63 +153,27 @@
             appId: "1:278970320528:web:30d08c635ed9e623f1ba15"
         };
         
-        try { firebase.initializeApp(firebaseConfig); } catch(e){ console.error(e); }
+        try { firebase.initializeApp(firebaseConfig); } catch(e){}
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Login Logic
-        function doLogin(e){ 
-            e.preventDefault(); 
-            auth.signInWithEmailAndPassword(document.getElementById('em').value, document.getElementById('pw').value)
-            .catch(err => { document.getElementById('errMsg').innerText = err.message; document.getElementById('errMsg').classList.remove('hidden'); });
-        }
+        function doLogin(e){ e.preventDefault(); auth.signInWithEmailAndPassword(document.getElementById('em').value, document.getElementById('pw').value).catch(err => { document.getElementById('errMsg').innerText = err.message; document.getElementById('errMsg').classList.remove('hidden'); }); }
+        auth.onAuthStateChanged(u => { if(u){ document.getElementById('login').classList.add('hidden'); init(); } else { document.getElementById('login').classList.remove('hidden'); } });
 
-        auth.onAuthStateChanged(u => {
-            if(u){ document.getElementById('login').classList.add('hidden'); init(); }
-            else { document.getElementById('login').classList.remove('hidden'); }
-        });
-
-        // Sidebar & Navigation
         function toggleSidebar() {
             const sb = document.getElementById('sidebar');
             const bd = document.getElementById('backdrop');
-            
-            if(sb.classList.contains('-translate-x-full')) {
-                // Open
-                sb.classList.remove('-translate-x-full');
-                bd.classList.remove('hidden');
-            } else {
-                // Close
-                sb.classList.add('-translate-x-full');
-                bd.classList.add('hidden');
-            }
+            if(sb.classList.contains('-translate-x-full')) { sb.classList.remove('-translate-x-full'); bd.classList.remove('hidden'); }
+            else { sb.classList.add('-translate-x-full'); bd.classList.add('hidden'); }
         }
 
         function nav(page) {
-            // Update Title
-            const titles = { 'home': 'Dashboard', 'users': 'All Members', 'refer': 'Referral Stats', 'tasks': 'Task Manager', 'withdraw': 'Withdraw Requests', 'settings': 'Settings' };
-            document.getElementById('pageTitle').innerText = titles[page];
-            
-            // Hide all pages
             document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
             document.getElementById('t-' + page).classList.remove('hidden');
-            
-            // Update Menu Active State
-            document.querySelectorAll('.nav-item').forEach(el => {
-                el.classList.remove('bg-emerald-500/10', 'text-emerald-400');
-                el.classList.add('text-gray-400');
-            });
-            event.currentTarget.classList.remove('text-gray-400');
-            event.currentTarget.classList.add('bg-emerald-500/10', 'text-emerald-400');
-
-            // Close sidebar on mobile
+            document.querySelectorAll('.nav-item').forEach(el => { el.classList.remove('bg-emerald-500/10', 'text-emerald-400'); el.classList.add('text-gray-400'); });
+            event.currentTarget.classList.remove('text-gray-400'); event.currentTarget.classList.add('bg-emerald-500/10', 'text-emerald-400');
             if(window.innerWidth < 768) toggleSidebar();
-
-            // Load Data
-            if(page==='users') loadUsers();
-            if(page==='tasks') loadTasks();
-            if(page==='withdraw') loadW();
-            if(page==='refer') loadRefs();
+            if(page==='users') loadUsers(); if(page==='tasks') loadTasks(); if(page==='withdraw') loadW(); if(page==='refer') loadRefs();
         }
 
         function init(){
@@ -286,8 +182,7 @@
             db.collection('settings').doc('config').get().then(d => { if(d.exists) document.getElementById('setNot').value = d.data().notice||''; });
         }
 
-        // --- Data Loading Functions ---
-
+        // --- UPDATED USER MANAGEMENT ---
         async function loadUsers() {
             const t = document.getElementById('userTable');
             t.innerHTML = '<tr><td colspan="3" class="p-4 text-center">Loading...</td></tr>';
@@ -295,99 +190,52 @@
             t.innerHTML = '';
             s.forEach(d => {
                 const u = d.data();
+                const isBanned = u.isBanned ? true : false;
                 t.innerHTML += `<tr class="border-b border-slate-700 hover:bg-slate-800/50">
                     <td class="p-4">
-                        <div class="font-bold text-white">${u.name}</div>
+                        <div class="font-bold text-white flex items-center gap-2">
+                            ${u.name} ${isBanned ? '<span class="text-[10px] bg-red-600 text-white px-2 rounded">BANNED</span>' : ''}
+                        </div>
                         <div class="text-xs text-gray-500 font-mono">${u.id}</div>
                     </td>
                     <td class="p-4 font-bold text-emerald-400">৳${u.balance.toFixed(2)}</td>
-                    <td class="p-4"><button onclick="editBal('${d.id}', ${u.balance})" class="text-xs bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white px-3 py-1 rounded transition">Edit Balance</button></td>
+                    <td class="p-4 flex gap-2 justify-center">
+                        <button onclick="editBal('${d.id}', ${u.balance})" title="Edit Balance" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white w-8 h-8 rounded flex items-center justify-center transition"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="banUser('${d.id}', ${isBanned})" title="${isBanned ? 'Unban' : 'Ban'}" class="bg-yellow-600/20 text-yellow-400 hover:bg-yellow-600 hover:text-white w-8 h-8 rounded flex items-center justify-center transition"><i class="fa-solid ${isBanned ? 'fa-user-check' : 'fa-ban'}"></i></button>
+                        <button onclick="delUser('${d.id}')" title="Delete" class="bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white w-8 h-8 rounded flex items-center justify-center transition"><i class="fa-solid fa-trash"></i></button>
+                    </td>
                 </tr>`;
             });
         }
         async function editBal(id, old){ const n=prompt('New Balance:', old); if(n) { await db.collection('users').doc(id).update({balance:Number(n)}); loadUsers(); }}
+        async function banUser(id, currentStatus){ if(confirm(currentStatus ? "Unban User?" : "Ban User?")) { await db.collection('users').doc(id).update({isBanned: !currentStatus}); loadUsers(); }}
+        async function delUser(id){ if(confirm("Delete User Permanently?")) { await db.collection('users').doc(id).delete(); loadUsers(); }}
 
         async function loadRefs() {
-            const t = document.getElementById('refTable');
-            t.innerHTML = '<tr><td colspan="3" class="p-4 text-center">Loading...</td></tr>';
+            const t = document.getElementById('refTable'); t.innerHTML = '<tr><td colspan="3" class="p-4 text-center">Loading...</td></tr>';
             const s = await db.collection('users').orderBy('refCount', 'desc').limit(20).get();
             t.innerHTML = '';
-            if(s.empty) { t.innerHTML = '<tr><td colspan="3" class="p-4 text-center">No Data</td></tr>'; return; }
-            s.forEach(d => {
-                const u = d.data();
-                if(u.refCount > 0) {
-                    t.innerHTML += `<tr class="border-b border-slate-700 hover:bg-slate-800/50">
-                        <td class="p-4 font-bold text-white">${u.name}<br><span class="text-xs text-gray-500 font-normal font-mono">${u.id}</span></td>
-                        <td class="p-4 font-bold text-xl text-emerald-400">${u.refCount}</td>
-                        <td class="p-4 text-gray-300">৳${u.refEarn || 0}</td>
-                    </tr>`;
-                }
-            });
+            s.forEach(d => { const u = d.data(); if(u.refCount>0) t.innerHTML += `<tr class="border-b border-slate-700"><td class="p-4 text-white">${u.name}</td><td class="p-4 font-bold text-emerald-400">${u.refCount}</td><td class="p-4 text-gray-400">৳${u.refEarn||0}</td></tr>`; });
         }
 
         async function loadTasks() {
-            const d = document.getElementById('taskList');
-            d.innerHTML = '<div class="text-center text-gray-500">Loading tasks...</div>';
+            const d = document.getElementById('taskList'); d.innerHTML = '';
             const s = await db.collection('tasks').where('active', '==', true).get();
-            d.innerHTML = '';
-            s.forEach(doc => {
-                const t = doc.data();
-                d.innerHTML += `<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center group hover:border-emerald-500/50 transition">
-                    <div>
-                        <div class="font-bold text-white text-sm">${t.title} <span class="ml-2 text-[10px] bg-slate-700 px-2 py-0.5 rounded text-yellow-500">⏱️ ${t.timer}s</span></div>
-                        <div class="text-xs text-gray-500 mt-1 truncate max-w-[200px]">${t.link}</div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="font-bold text-emerald-400">৳${t.reward}</span>
-                        <button onclick="delTask('${doc.id}')" class="text-gray-500 hover:text-red-500 transition"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                </div>`;
-            });
+            s.forEach(doc => { const t = doc.data(); d.innerHTML += `<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center"><div><div class="font-bold text-white text-sm">${t.title}</div><div class="text-xs text-gray-500">${t.link}</div></div><div class="flex items-center gap-3"><span class="font-bold text-emerald-400">৳${t.reward}</span><button onclick="delTask('${doc.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`; });
         }
-        async function addTask() {
-            const t=document.getElementById('tt').value, l=document.getElementById('tl').value, r=document.getElementById('tr').value, m=document.getElementById('tm').value;
-            if(t && r) { 
-                await db.collection('tasks').add({title:t, link:l, reward:Number(r), timer:Number(m)||10, active:true}); 
-                document.getElementById('tt').value=''; document.getElementById('tl').value='';
-                loadTasks(); 
-            }
-        }
-        async function delTask(id) { if(confirm('Delete Task?')) { await db.collection('tasks').doc(id).update({active:false}); loadTasks(); }}
+        async function addTask() { const t=document.getElementById('tt').value, l=document.getElementById('tl').value, r=document.getElementById('tr').value, m=document.getElementById('tm').value; if(t&&r) { await db.collection('tasks').add({title:t, link:l, reward:Number(r), timer:Number(m)||10, active:true}); document.getElementById('tt').value=''; loadTasks(); }}
+        async function delTask(id) { if(confirm('Delete?')) { await db.collection('tasks').doc(id).update({active:false}); loadTasks(); }}
 
         async function loadW() {
-            const t = document.getElementById('wTable');
-            t.innerHTML = '<tr><td colspan="3" class="p-4 text-center">Loading...</td></tr>';
+            const t = document.getElementById('wTable'); t.innerHTML = '<tr><td colspan="3" class="p-4 text-center">Loading...</td></tr>';
             const s = await db.collection('withdrawals').where('status', '==', 'pending').get();
             t.innerHTML = '';
             if(s.empty) { t.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-gray-500">No Pending Requests</td></tr>'; return; }
-            s.forEach(doc => {
-                const w = doc.data();
-                t.innerHTML += `<tr class="border-b border-slate-700 hover:bg-slate-800/50">
-                    <td class="p-4">
-                        <div class="font-bold text-white text-sm">${w.userName}</div>
-                        <div class="text-xs text-emerald-400 font-mono mt-1">${w.method} : ${w.number}</div>
-                    </td>
-                    <td class="p-4 font-bold text-white text-lg">৳${w.amount}</td>
-                    <td class="p-4 flex gap-2">
-                        <button onclick="procW('${doc.id}','paid')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded text-xs font-bold shadow">Pay</button>
-                        <button onclick="procW('${doc.id}','rejected',${w.amount},'${w.userId}')" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded text-xs font-bold shadow">Refund</button>
-                    </td>
-                </tr>`;
-            });
+            s.forEach(doc => { const w = doc.data(); t.innerHTML += `<tr class="border-b border-slate-700"><td class="p-4"><div class="font-bold text-white text-sm">${w.userName}</div><div class="text-xs text-emerald-400">${w.method} : ${w.number}</div></td><td class="p-4 font-bold text-white">৳${w.amount}</td><td class="p-4 flex gap-2"><button onclick="procW('${doc.id}','paid')" class="bg-emerald-600 text-white px-2 py-1 rounded text-xs">Pay</button><button onclick="procW('${doc.id}','rejected',${w.amount},'${w.userId}')" class="bg-red-600 text-white px-2 py-1 rounded text-xs">Refund</button></td></tr>`; });
         }
-        async function procW(id, st, amt, uid) {
-            if(!confirm("Confirm " + st + "?")) return;
-            const b = db.batch();
-            b.update(db.collection('withdrawals').doc(id), {status: st});
-            if(st === 'rejected') b.update(db.collection('users').doc(uid), {balance: firebase.firestore.FieldValue.increment(amt)});
-            await b.commit();
-            loadW();
-        }
+        async function procW(id, st, amt, uid) { if(!confirm(st+"?")) return; const b = db.batch(); b.update(db.collection('withdrawals').doc(id), {status: st}); if(st === 'rejected') b.update(db.collection('users').doc(uid), {balance: firebase.firestore.FieldValue.increment(amt)}); await b.commit(); loadW(); }
 
-        async function saveSet() {
-            await db.collection('settings').doc('config').set({notice: document.getElementById('setNot').value}, {merge: true});
-            alert('Settings Saved!');
-        }
+        async function saveSet() { await db.collection('settings').doc('config').set({notice: document.getElementById('setNot').value}, {merge: true}); alert('Saved!'); }
     </script>
 </body>
 </html>
