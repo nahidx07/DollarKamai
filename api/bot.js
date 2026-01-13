@@ -1,34 +1,67 @@
-import fetch from "node-fetch";
+const { Telegraf } = require('telegraf');
+const admin = require('firebase-admin');
 
-const TOKEN = process.env.BOT_TOKEN;
-const TELEGRAM_API = `https://api.telegram.org/bot${TOKEN}`;
-
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(200).json({ status: "Bot running" });
-  }
-
-  const update = req.body;
-
-  if (update.message) {
-    const chatId = update.message.chat.id;
-    const text = update.message.text || "";
-
-    let reply = "👋 Welcome to Dollar Kamai Bot";
-
-    if (text === "/start") {
-      reply = "💰 Dollar Kamai Bot চালু হয়েছে!\n\nরেফার করে আয় শুরু করুন 🚀";
-    }
-
-    await fetch(`${TELEGRAM_API}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: reply
-      })
-    });
-  }
-
-  res.status(200).json({ ok: true });
+// Firebase Admin Setup
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT))
+  });
 }
+const db = admin.firestore();
+const bot = new Telegraf(process.env.BOT_TOKEN);
+
+// Bot Logic
+bot.start(async (ctx) => {
+  const u = ctx.from;
+  const refId = ctx.startPayload;
+  const uid = u.id.toString();
+
+  const ref = db.collection('users').doc(uid);
+  const snap = await ref.get();
+
+  if (!snap.exists) {
+    await ref.set({
+      id: u.id,
+      name: u.first_name,
+      balance: 0,
+      refCount: 0,
+      refEarn: 0,
+      joined: admin.firestore.FieldValue.serverTimestamp()
+    });
+
+    if (refId && refId !== uid) {
+      await db.collection('users').doc(refId).update({
+        balance: admin.firestore.FieldValue.increment(3),
+        refCount: admin.firestore.FieldValue.increment(1),
+        refEarn: admin.firestore.FieldValue.increment(3)
+      }).catch(e=>{});
+    }
+  }
+
+  ctx.reply(`🎉 *Welcome ${u.first_name}!*
+
+✅ Account Created Successfully.
+🆔 ID: \`${u.id}\`
+
+👇 Click below to start earning:`, {
+    parse_mode: 'Markdown',
+    reply_markup: {
+      inline_keyboard: [[{ text: "💰 Open App", web_app: { url: process.env.WEBAPP_URL } }]]
+    }
+  });
+});
+
+// Vercel Serverless Function Handler
+module.exports = async (req, res) => {
+    try {
+        if (req.method === 'POST') {
+            await bot.handleUpdate(req.body);
+            res.status(200).send('OK');
+        } else {
+            res.status(200).send('Bot is running on Vercel!');
+        }
+    } catch (e) {
+        console.error(e);
+        res.status(500).send('Error');
+    }
+};
