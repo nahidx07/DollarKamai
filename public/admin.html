@@ -3,70 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
+    <title>Admin Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>body{background-color:#0f172a;color:#cbd5e1;}.sidebar{transition:transform 0.3s}.sidebar-closed{transform:translateX(-100%)}@media(min-width:768px){.sidebar-closed{transform:translateX(0)}}</style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>body{background-color:#0f172a;color:#cbd5e1;font-family:'Inter',sans-serif;}.sidebar{transition:transform 0.3s ease-in-out;}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#334155;border-radius:10px}</style>
 </head>
 <body class="overflow-hidden h-screen flex">
     <!-- Login -->
     <div id="login" class="fixed inset-0 z-[100] bg-slate-900 flex items-center justify-center">
-        <form onsubmit="doLogin(event)" class="bg-slate-800 p-8 rounded-2xl w-full max-w-sm border border-slate-700 shadow-2xl">
-            <h2 class="text-2xl font-bold text-white text-center mb-6">Admin Access</h2>
-            <input type="email" id="em" placeholder="Email" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white mb-4">
-            <input type="password" id="pw" placeholder="Password" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white mb-4">
-            <button class="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg">Login</button>
-            <p id="errMsg" class="text-red-500 text-center mt-4 text-xs hidden"></p>
+        <form onsubmit="doLogin(event)" class="bg-slate-800 p-8 rounded-2xl w-full max-w-sm border border-slate-700 shadow-2xl text-center">
+            <i class="fa-solid fa-user-shield text-5xl text-emerald-500 mb-4"></i>
+            <h2 class="text-2xl font-bold text-white mb-6">Admin Access</h2>
+            <input type="email" id="em" placeholder="Email" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white mb-3 outline-none focus:border-emerald-500 transition">
+            <input type="password" id="pw" placeholder="Password" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white mb-5 outline-none focus:border-emerald-500 transition">
+            <button class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg shadow-lg">Login Dashboard</button>
+            <p id="errMsg" class="text-red-500 mt-4 text-xs hidden"></p>
         </form>
     </div>
 
-    <!-- Backdrop -->
-    <div id="backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden"></div>
+    <!-- Sidebar Backdrop -->
+    <div id="backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 z-40 hidden backdrop-blur-sm md:hidden"></div>
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-50 w-64 bg-slate-800 border-r border-slate-700 transform -translate-x-full md:translate-x-0 flex flex-col h-full">
-        <div class="h-16 flex items-center px-6 border-b border-slate-700"><h1 class="text-xl font-bold text-white">Dollar<span class="text-emerald-500">Kamai</span></h1></div>
+    <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-50 w-64 bg-slate-800 border-r border-slate-700 transform -translate-x-full md:translate-x-0 flex flex-col h-full shadow-2xl">
+        <div class="h-20 flex items-center px-6 border-b border-slate-700">
+            <i class="fa-solid fa-coins text-emerald-500 text-2xl mr-2"></i>
+            <h1 class="text-xl font-bold text-white tracking-wide">Dollar<span class="text-emerald-500">Kamai</span></h1>
+        </div>
         <nav class="flex-1 overflow-y-auto p-4 space-y-2">
-            <button onclick="nav('home')" class="nav-item w-full flex gap-3 px-4 py-3 rounded-xl text-sm font-medium text-emerald-400 bg-emerald-500/10">Dashboard</button>
-            <button onclick="nav('users')" class="nav-item w-full flex gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700">Members</button>
-            <button onclick="nav('tasks')" class="nav-item w-full flex gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700">Tasks</button>
-            <button onclick="nav('settings')" class="nav-item w-full flex gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700">Settings</button>
+            <p class="px-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Menu</p>
+            <button onclick="nav('home')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-emerald-400 bg-emerald-500/10"><i class="fa-solid fa-chart-pie w-5"></i> Dashboard</button>
+            <button onclick="nav('users')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-users w-5"></i> Members</button>
+            <button onclick="nav('refer')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-user-group w-5"></i> Referrals</button>
+            <button onclick="nav('withdraw')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-wallet w-5"></i> Withdraws</button>
+            <button onclick="nav('tasks')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-list-check w-5"></i> Tasks</button>
+            <button onclick="nav('settings')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-gear w-5"></i> Settings</button>
         </nav>
-        <div class="p-4"><button onclick="firebase.auth().signOut()" class="w-full px-4 py-2 rounded-lg text-sm font-bold text-red-400 bg-red-500/10">Logout</button></div>
+        <div class="p-4 border-t border-slate-700">
+            <button onclick="firebase.auth().signOut()" class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-red-400 bg-red-500/10 hover:bg-red-500 hover:text-white transition"><i class="fa-solid fa-power-off"></i> Logout</button>
+        </div>
     </aside>
 
-    <!-- Main -->
+    <!-- Main Content -->
     <main class="flex-1 flex flex-col h-screen overflow-hidden md:ml-64 w-full bg-slate-900">
-        <header class="h-16 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-4">
-            <button onclick="toggleSidebar()" class="md:hidden text-white"><i class="fa-solid fa-bars"></i></button>
-            <h2 id="pageTitle" class="text-lg font-bold text-white">Dashboard</h2>
+        <header class="h-20 bg-slate-800/80 backdrop-blur border-b border-slate-700 flex items-center justify-between px-6 z-20">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="md:hidden text-gray-300 hover:text-white"><i class="fa-solid fa-bars text-xl"></i></button>
+                <h2 id="pageTitle" class="text-lg font-bold text-white tracking-wide">Overview</h2>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <p class="text-xs font-bold text-white">Admin</p>
+                    <p class="text-[10px] text-emerald-500">● Online</p>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600"><i class="fa-solid fa-user-tie text-gray-400"></i></div>
+            </div>
         </header>
-        <div class="flex-1 overflow-y-auto p-4 md:p-8">
+
+        <div class="flex-1 overflow-y-auto p-6 md:p-8 scroll-smooth">
             <!-- Home -->
-            <div id="t-home" class="page block">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700"><p class="text-xs text-gray-400">Total Users</p><h2 id="stUser" class="text-3xl font-bold text-white">...</h2></div>
-                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700"><p class="text-xs text-gray-400">Pending Pay</p><h2 id="stPay" class="text-3xl font-bold text-yellow-500">...</h2></div>
-                </div>
-            </div>
-            <!-- Settings -->
-            <div id="t-settings" class="page hidden space-y-4">
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 max-w-2xl">
-                    <h3 class="font-bold text-white mb-4">System Settings</h3>
-                    <div class="flex items-center justify-between mb-4 bg-slate-700 p-3 rounded">
-                        <span class="text-white">Maintenance Mode</span>
-                        <input type="checkbox" id="setMaint" class="w-5 h-5">
+            <div id="t-home" class="page block space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg relative overflow-hidden">
+                        <div class="absolute right-0 top-0 p-4 opacity-10"><i class="fa-solid fa-users text-6xl"></i></div>
+                        <p class="text-xs text-gray-400 uppercase tracking-widest font-bold">Total Users</p>
+                        <h2 id="stUser" class="text-4xl font-bold text-white mt-2">...</h2>
                     </div>
-                    <label class="block text-gray-400 text-xs uppercase mb-2">Popup Text</label>
-                    <input id="setPopTxt" class="w-full bg-slate-900 border border-slate-600 rounded p-3 text-white mb-2">
-                    <label class="block text-gray-400 text-xs uppercase mb-2">Popup Image URL</label>
-                    <input id="setPopImg" class="w-full bg-slate-900 border border-slate-600 rounded p-3 text-white mb-4">
-                    <button onclick="saveSet()" class="bg-emerald-600 text-white px-6 py-2 rounded font-bold">Save Settings</button>
+                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg relative overflow-hidden">
+                        <div class="absolute right-0 top-0 p-4 opacity-10"><i class="fa-solid fa-clock text-6xl text-yellow-500"></i></div>
+                        <p class="text-xs text-gray-400 uppercase tracking-widest font-bold">Pending Pay</p>
+                        <h2 id="stPay" class="text-4xl font-bold text-yellow-500 mt-2">...</h2>
+                    </div>
                 </div>
             </div>
-            <!-- Other Tabs (Simplified) -->
-            <div id="t-users" class="page hidden"><button onclick="loadUsers()" class="bg-blue-600 text-white px-4 py-2 rounded mb-4">Refresh</button><div class="bg-slate-800 rounded-xl overflow-x-auto"><table class="w-full text-left text-gray-400 text-sm"><tbody id="userTable"></tbody></table></div></div>
-            <div id="t-tasks" class="page hidden"><div class="bg-slate-800 p-4 rounded mb-4"><input id="tt" placeholder="Title" class="bg-slate-900 p-2 rounded text-white mr-2"><input id="tr" type="number" placeholder="Reward" class="bg-slate-900 p-2 rounded text-white mr-2"><button onclick="addTask()" class="bg-emerald-600 text-white px-4 py-2 rounded">Add</button></div><div id="taskList" class="space-y-2"></div></div>
+
+            <!-- Members -->
+            <div id="t-users" class="page hidden space-y-4">
+                <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
+                    <input id="searchUser" placeholder="Search User..." class="bg-slate-900 border border-slate-600 rounded-lg p-2 text-sm text-white outline-none">
+                    <button onclick="loadUsers()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-500 shadow"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
+                </div>
+                <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-gray-400">
+                            <thead class="bg-slate-700 text-white text-xs uppercase font-bold"><tr><th class="p-4">User</th><th class="p-4">Contact</th><th class="p-4">Balance</th><th class="p-4 text-center">Actions</th></tr></thead>
+                            <tbody id="userTable" class="divide-y divide-slate-700"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Withdraws -->
+            <div id="t-withdraw" class="page hidden space-y-4">
+                <button onclick="loadW()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow"><i class="fa-solid fa-rotate mr-1"></i> Refresh List</button>
+                <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-gray-400">
+                            <thead class="bg-slate-700 text-white text-xs uppercase font-bold"><tr><th class="p-4">Request Details</th><th class="p-4">Amount</th><th class="p-4">Decision</th></tr></thead>
+                            <tbody id="wTable" class="divide-y divide-slate-700"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Referrals, Tasks, Settings (Simplified for brevity but functional) -->
+            <div id="t-refer" class="page hidden"><button onclick="loadRefs()" class="bg-purple-600 text-white px-4 py-2 rounded mb-4 font-bold text-xs">Load Top</button><div class="bg-slate-800 rounded-xl border border-slate-700 overflow-x-auto"><table class="w-full text-left text-gray-400 text-sm"><tbody id="refTable"></tbody></table></div></div>
+            <div id="t-tasks" class="page hidden"><div class="bg-slate-800 p-6 rounded-xl border border-slate-700 mb-6"><h3 class="font-bold text-white mb-4">Add Task</h3><div class="flex gap-2"><input id="tt" placeholder="Title" class="bg-slate-900 p-2 rounded w-full text-white border border-slate-600"><input id="tr" type="number" placeholder="Reward" class="bg-slate-900 p-2 rounded w-24 text-white border border-slate-600"><button onclick="addTask()" class="bg-emerald-600 text-white px-6 rounded font-bold">Add</button></div></div><div id="taskList" class="space-y-2"></div></div>
+            <div id="t-settings" class="page hidden"><div class="bg-slate-800 p-6 rounded-xl border border-slate-700 max-w-2xl"><label class="text-xs uppercase font-bold text-gray-400">Marquee Notice</label><textarea id="setNot" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white mt-2 mb-4"></textarea><button onclick="saveSet()" class="bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold">Save</button></div></div>
         </div>
     </main>
 
@@ -89,19 +133,79 @@
         auth.onAuthStateChanged(u=>{if(u){document.getElementById('login').classList.add('hidden');init()}else{document.getElementById('login').classList.remove('hidden')}});
         
         function toggleSidebar(){const s=document.getElementById('sidebar');const b=document.getElementById('backdrop');s.classList.toggle('-translate-x-full');b.classList.toggle('hidden');}
-        function nav(p){document.querySelectorAll('.page').forEach(e=>e.classList.add('hidden'));document.getElementById('t-'+p).classList.remove('hidden');if(p=='users')loadUsers();if(p=='tasks')loadTasks();}
-        function init(){db.collection('users').get().then(s=>document.getElementById('stUser').innerText=s.size); db.collection('settings').doc('config').get().then(d=>{if(d.exists){const D=d.data(); document.getElementById('setMaint').checked=D.maintenance; document.getElementById('setPopTxt').value=D.popupText||''; document.getElementById('setPopImg').value=D.popupImg||'';}});}
+        function nav(p){
+            document.querySelectorAll('.page').forEach(e=>e.classList.add('hidden'));document.getElementById('t-'+p).classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(e=>{e.classList.remove('bg-emerald-500/10','text-emerald-400');e.classList.add('text-gray-400')});
+            event.currentTarget.classList.remove('text-gray-400'); event.currentTarget.classList.add('bg-emerald-500/10','text-emerald-400');
+            document.getElementById('pageTitle').innerText = p.charAt(0).toUpperCase() + p.slice(1);
+            if(window.innerWidth<768)toggleSidebar();
+            if(p=='users')loadUsers(); if(p=='tasks')loadTasks(); if(p=='withdraw')loadW(); if(p=='refer')loadRefs();
+        }
+        function init(){db.collection('users').get().then(s=>document.getElementById('stUser').innerText=s.size); db.collection('withdrawals').where('status','==','pending').onSnapshot(s=>document.getElementById('stPay').innerText=s.size); db.collection('settings').doc('config').get().then(d=>{if(d.exists)document.getElementById('setNot').value=d.data().notice||''});}
 
-        async function loadUsers(){const t=document.getElementById('userTable');t.innerHTML='Loading...';const s=await db.collection('users').limit(50).get();t.innerHTML='';s.forEach(d=>{const u=d.data();t.innerHTML+=`<tr class="border-b border-slate-700"><td class="p-4 text-white">${u.name}</td><td class="p-4 font-bold text-emerald-400">৳${u.balance}</td><td class="p-4"><button onclick="edB('${d.id}',${u.balance})" class="text-blue-400 mr-2">Edit</button><button onclick="ban('${d.id}',${u.isBanned})" class="text-yellow-400 mr-2">${u.isBanned?'Unban':'Ban'}</button><button onclick="del('${d.id}')" class="text-red-400">Del</button></td></tr>`})}
-        async function edB(i,o){const n=prompt('New Balance',o);if(n)await db.collection('users').doc(i).update({balance:Number(n)});loadUsers();}
+        async function loadUsers(){
+            const t=document.getElementById('userTable');t.innerHTML='<tr><td colspan="4" class="p-4 text-center">Loading...</td></tr>';
+            const s=await db.collection('users').limit(50).get(); t.innerHTML='';
+            s.forEach(d=>{
+                const u=d.data();
+                t.innerHTML+=`<tr class="border-b border-slate-700 hover:bg-slate-800/50">
+                    <td class="p-4"><div class="font-bold text-white">${u.name}</div><div class="text-xs text-gray-500">${u.id}</div></td>
+                    <td class="p-4 text-xs text-gray-400">${u.phone||'-'}<br>${u.email||'-'}</td>
+                    <td class="p-4 font-bold text-emerald-400">৳${u.balance.toFixed(2)}</td>
+                    <td class="p-4 flex gap-2 justify-center">
+                        <button onclick="editBal('${d.id}',${u.balance})" class="bg-blue-600/20 text-blue-400 p-2 rounded hover:bg-blue-600 hover:text-white transition"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="ban('${d.id}',${u.isBanned})" class="bg-yellow-600/20 text-yellow-400 p-2 rounded hover:bg-yellow-600 hover:text-white transition"><i class="fa-solid ${u.isBanned?'fa-check':'fa-ban'}"></i></button>
+                        <button onclick="del('${d.id}')" class="bg-red-600/20 text-red-400 p-2 rounded hover:bg-red-600 hover:text-white transition"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>`
+            });
+        }
+        async function editBal(i,o){const n=prompt('New Balance',o);if(n)await db.collection('users').doc(i).update({balance:Number(n)});loadUsers();}
         async function ban(i,s){if(confirm(s?'Unban?':'Ban?'))await db.collection('users').doc(i).update({isBanned:!s});loadUsers();}
         async function del(i){if(confirm('Delete?'))await db.collection('users').doc(i).delete();loadUsers();}
 
-        async function loadTasks(){const d=document.getElementById('taskList');d.innerHTML='';const s=await db.collection('tasks').where('active','==',true).get();s.forEach(o=>{d.innerHTML+=`<div class="bg-slate-800 p-3 flex justify-between rounded border border-slate-700"><span>${o.data().title}</span><button onclick="delT('${o.id}')" class="text-red-500">Del</button></div>`})}
+        async function loadW(){
+            const t=document.getElementById('wTable');t.innerHTML='<tr><td colspan="3" class="p-4 text-center">Loading...</td></tr>';
+            const s=await db.collection('withdrawals').where('status','==','pending').get(); t.innerHTML='';
+            if(s.empty){t.innerHTML='<tr><td colspan="3" class="p-4 text-center text-gray-500">No Pending Requests</td></tr>';return;}
+            s.forEach(d=>{
+                const w=d.data();
+                t.innerHTML+=`<tr class="border-b border-slate-700">
+                    <td class="p-4"><div class="font-bold text-white">${w.userName}</div><div class="text-xs text-emerald-400 font-mono">${w.method}: ${w.number}</div></td>
+                    <td class="p-4 font-bold text-white text-lg">৳${w.amount}</td>
+                    <td class="p-4 flex gap-2">
+                        <button onclick="procW('${d.id}','paid')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded text-xs font-bold shadow">Approve</button>
+                        <button onclick="rejectW('${d.id}',${w.amount},'${w.userId}')" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded text-xs font-bold shadow">Decline</button>
+                    </td>
+                </tr>`
+            });
+        }
+        async function procW(id,st){if(confirm("Approve?")) {await db.collection('withdrawals').doc(id).update({status:st}); loadW();}}
+        
+        async function rejectW(id, amt, uid) {
+            const reason = prompt("রিজেক্ট করার কারণ লিখুন (এটি ইউজারের কাছে যাবে):", "ভুল নাম্বার / তথ্য");
+            if(reason === null) return; // Cancelled
+            
+            const b = db.batch();
+            // 1. Update Withdrawal Status + Reason
+            b.update(db.collection('withdrawals').doc(id), {
+                status: 'rejected',
+                reason: reason
+            });
+            // 2. Refund Money
+            b.update(db.collection('users').doc(uid), {
+                balance: firebase.firestore.FieldValue.increment(amt)
+            });
+            
+            await b.commit();
+            loadW();
+        }
+
+        async function loadRefs(){const t=document.getElementById('refTable');t.innerHTML='';const s=await db.collection('users').orderBy('refCount','desc').limit(20).get();s.forEach(d=>{const u=d.data();if(u.refCount>0)t.innerHTML+=`<tr class="border-b border-slate-700"><td class="p-3">${u.name}</td><td class="p-3 text-emerald-400 font-bold">${u.refCount}</td><td class="p-3">৳${u.refEarn||0}</td></tr>`})}
+        async function loadTasks(){const d=document.getElementById('taskList');d.innerHTML='';const s=await db.collection('tasks').where('active','==',true).get();s.forEach(o=>{d.innerHTML+=`<div class="bg-slate-800 p-3 flex justify-between rounded border border-slate-700 mb-2"><span>${o.data().title}</span><button onclick="delT('${o.id}')" class="text-red-500">Del</button></div>`})}
         async function addTask(){const t=document.getElementById('tt').value,r=document.getElementById('tr').value;if(t&&r){await db.collection('tasks').add({title:t,reward:Number(r),timer:10,link:'',active:true});loadTasks();}}
         async function delT(i){if(confirm('Del?'))await db.collection('tasks').doc(i).update({active:false});loadTasks();}
-
-        async function saveSet(){await db.collection('settings').doc('config').set({maintenance:document.getElementById('setMaint').checked, popupText:document.getElementById('setPopTxt').value, popupImg:document.getElementById('setPopImg').value},{merge:true});alert('Saved!');}
+        async function saveSet(){await db.collection('settings').doc('config').set({notice:document.getElementById('setNot').value},{merge:true});alert('Saved!');}
     </script>
 </body>
 </html>
