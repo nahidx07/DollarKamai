@@ -14,8 +14,7 @@
         .modal.active { opacity: 1; pointer-events: auto; }
         .loader { border: 3px solid #1e293b; border-top: 3px solid #10b981; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        /* Disabled Task Style */
-        .task-done { opacity: 0.6; filter: grayscale(1); pointer-events: none; order: 9999; }
+        .task-done { opacity: 0.5; filter: grayscale(100%); pointer-events: none; order: 9999; }
     </style>
 </head>
 <body class="pb-24 select-none bg-slate-900">
@@ -24,7 +23,15 @@
     <div id="splash" class="fixed inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center">
         <i class="fa-solid fa-sack-dollar text-6xl text-emerald-500 mb-4 animate-bounce"></i>
         <h1 class="text-2xl font-bold text-white">ডলার কামাই</h1>
-        <p class="text-gray-400 text-sm mt-2">লোড হচ্ছে...</p>
+        <p id="loadingText" class="text-gray-400 text-sm mt-2">কানেক্টিং...</p>
+    </div>
+
+    <!-- BAN SCREEN -->
+    <div id="banScreen" class="fixed inset-0 bg-red-900/90 z-[100] hidden flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm">
+        <i class="fa-solid fa-ban text-6xl text-white mb-4"></i>
+        <h1 class="text-3xl font-bold text-white">ACCOUNT BANNED</h1>
+        <p class="text-gray-200 mt-2">অস্বাভাবিক কার্যক্রমের কারণে আপনার একাউন্টটি সাসপেন্ড করা হয়েছে।</p>
+        <button onclick="window.open('https://t.me/nahidx07')" class="mt-6 bg-white text-red-900 px-6 py-2 rounded-full font-bold">Contact Admin</button>
     </div>
 
     <!-- TIMER MODAL -->
@@ -42,29 +49,28 @@
 
     <!-- Main App -->
     <div id="app" class="hidden opacity-0 transition-opacity duration-500">
-        
         <!-- Header -->
         <header class="bg-gradient-to-b from-slate-800 to-slate-900 p-6 rounded-b-[2rem] shadow-2xl">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-emerald-600/20 flex items-center justify-center text-emerald-400 font-bold border border-emerald-500/30">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
+                    <!-- Profile Pic -->
+                    <img id="userAvatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="w-12 h-12 rounded-full border-2 border-emerald-500 object-cover bg-slate-700">
                     <div>
-                        <h2 id="userName" class="font-bold text-sm">Loading...</h2>
+                        <h2 id="userName" class="font-bold text-sm">User</h2>
                         <span class="text-[10px] text-gray-400 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">ID: <span id="userId">...</span></span>
                     </div>
                 </div>
                 <div class="text-right">
-                    <p class="text-[10px] text-gray-400 uppercase tracking-wider">Balance</p>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-wider">ব্যালেন্স</p>
                     <h1 class="text-2xl font-bold text-white">৳ <span id="balance">0.00</span></h1>
                 </div>
             </div>
-
-            <!-- Notice -->
-            <div class="mt-6 bg-slate-800/50 border border-slate-700 rounded-lg p-2 flex items-center gap-2">
-                <i class="fa-solid fa-bullhorn text-emerald-400 text-xs animate-pulse"></i>
-                <marquee id="noticeText" class="text-xs text-gray-300">Welcome to Dollar Kamai...</marquee>
+            <!-- Marquee Notice -->
+            <div class="mt-6 bg-slate-800/50 border border-slate-700 rounded-lg p-2 flex items-center gap-2 overflow-hidden">
+                <div class="bg-emerald-500/10 p-1.5 rounded text-emerald-400"><i class="fa-solid fa-bullhorn text-xs"></i></div>
+                <marquee id="noticeText" direction="left" scrollamount="4" class="text-xs text-gray-300 font-medium">
+                    Welcome to Dollar Kamai...
+                </marquee>
             </div>
         </header>
 
@@ -94,12 +100,10 @@
                     <i class="fa-solid fa-gift text-5xl text-emerald-500 mb-4 animate-bounce block"></i>
                     <h2 class="text-xl font-bold mb-2">রেফার করুন</h2>
                     <p class="text-gray-400 text-sm mb-4">প্রতি রেফারে বোনাস <span class="text-emerald-400 font-bold">৳3</span></p>
-                    
                     <div class="bg-slate-900 p-3 rounded-lg flex items-center gap-2 border border-slate-600 mb-4">
                         <input id="refLink" readonly class="bg-transparent text-xs text-gray-300 w-full outline-none" value="Loading...">
                         <button onclick="copyRef()" class="text-emerald-500 font-bold text-xs uppercase hover:text-white"><i class="fa-regular fa-copy text-lg"></i></button>
                     </div>
-                    
                     <div class="grid grid-cols-2 gap-3">
                         <div class="bg-slate-700/30 p-3 rounded-xl">
                             <p class="text-xs text-gray-400">মোট রেফার</p>
@@ -121,15 +125,12 @@
                         <button onclick="setMethod('bkash')" id="btn-bkash" class="bg-slate-700 p-3 rounded-xl border border-transparent focus:border-pink-500 text-sm font-bold transition">bKash</button>
                         <button onclick="setMethod('nagad')" id="btn-nagad" class="bg-slate-700 p-3 rounded-xl border border-transparent focus:border-orange-500 text-sm font-bold transition">Nagad</button>
                     </div>
-
                     <div class="space-y-3">
                         <input type="number" id="wNum" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3 text-white text-sm outline-none focus:border-emerald-500" placeholder="Number (017...)">
                         <input type="number" id="wAmount" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3 text-white text-sm outline-none focus:border-emerald-500" placeholder="Amount (Tk)">
                     </div>
-                    
                     <button onclick="withdraw()" class="w-full bg-emerald-600 hover:bg-emerald-500 mt-4 py-3 rounded-xl font-bold shadow-lg transition">উইথড্র কনফার্ম করুন</button>
                 </div>
-
                 <div class="mt-6">
                     <h3 class="font-bold text-sm text-gray-400 mb-3">হিস্টোরি</h3>
                     <div id="historyList" class="space-y-2"></div>
@@ -138,106 +139,138 @@
         </main>
 
         <nav class="fixed bottom-0 w-full bg-slate-900/95 backdrop-blur-md border-t border-slate-800 flex justify-around py-2 z-40 pb-safe">
-            <button onclick="nav('home')" class="nav-btn text-emerald-500 flex flex-col items-center p-2 w-16">
-                <i class="fa-solid fa-house text-lg mb-1"></i> <span class="text-[10px] font-medium">হোম</span>
-            </button>
-            <button onclick="nav('refer')" class="nav-btn text-gray-500 flex flex-col items-center p-2 w-16">
-                <i class="fa-solid fa-users text-lg mb-1"></i> <span class="text-[10px] font-medium">রেফার</span>
-            </button>
-            <button onclick="nav('withdraw')" class="nav-btn text-gray-500 flex flex-col items-center p-2 w-16">
-                <i class="fa-solid fa-wallet text-lg mb-1"></i> <span class="text-[10px] font-medium">ওয়ালেট</span>
-            </button>
+            <button onclick="nav('home')" class="nav-btn text-emerald-500 flex flex-col items-center p-2 w-16"><i class="fa-solid fa-house text-lg mb-1"></i> <span class="text-[10px] font-medium">হোম</span></button>
+            <button onclick="nav('refer')" class="nav-btn text-gray-500 flex flex-col items-center p-2 w-16"><i class="fa-solid fa-users text-lg mb-1"></i> <span class="text-[10px] font-medium">রেফার</span></button>
+            <button onclick="nav('withdraw')" class="nav-btn text-gray-500 flex flex-col items-center p-2 w-16"><i class="fa-solid fa-wallet text-lg mb-1"></i> <span class="text-[10px] font-medium">ওয়ালেট</span></button>
         </nav>
     </div>
 
+    <!-- Error/Success Toast -->
     <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-xl border border-slate-600 text-sm hidden z-[70]">Message</div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script>
-        // ⚠️⚠️ Firebase Config বসান ⚠️⚠️
+        // ⚠️⚠️⚠️ Firebase Config Here ⚠️⚠️⚠️
         const firebaseConfig = {
-            apiKey: "AIzaSyCgVhOPt9w6UhZWop6QLmq7AO3cpZtsQmI",
-            authDomain: "dollarkamai1.firebaseapp.com",
-            projectId: "dollarkamai1",
-            storageBucket: "dollarkamai1.firebasestorage.app",
-            messagingSenderId: "278970320528",
-            appId: "1:278970320528:web:30d08c635ed9e623f1ba15"
-        };
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
+        };
         
-        firebase.initializeApp(firebaseConfig);
+        try { firebase.initializeApp(firebaseConfig); } catch(e) { alert("Config Error"); }
+
         const db = firebase.firestore();
         const tg = window.Telegram.WebApp;
-        
         let user = null;
         let selectedMethod = 'bkash';
 
         document.addEventListener("DOMContentLoaded", async () => {
-            tg.expand();
-            const tgUser = tg.initDataUnsafe.user || { id: 112233, first_name: "Tester" }; // Demo ID
-            
-            const uRef = db.collection('users').doc(tgUser.id.toString());
-            const uSnap = await uRef.get();
+            try {
+                tg.expand();
+                const tgUser = tg.initDataUnsafe.user || { id: 123456, first_name: "Demo", username: "User", photo_url: "" };
+                
+                // Get User
+                const uRef = db.collection('users').doc(tgUser.id.toString());
+                const uSnap = await uRef.get();
 
-            if(uSnap.exists) {
-                user = uSnap.data();
-            } else {
-                const sp = tg.initDataUnsafe.start_param;
-                user = { id: tgUser.id, name: tgUser.first_name, balance: 0, refCount: 0, refEarn: 0 };
-                await uRef.set(user);
-                if(sp && sp!=user.id) db.collection('users').doc(sp).update({
-                    balance: firebase.firestore.FieldValue.increment(3),
-                    refCount: firebase.firestore.FieldValue.increment(1),
-                    refEarn: firebase.firestore.FieldValue.increment(3)
-                });
+                if(uSnap.exists) {
+                    user = uSnap.data();
+                    // BAN CHECK
+                    if(user.isBanned) {
+                        document.getElementById('splash').style.display = 'none';
+                        document.getElementById('banScreen').classList.remove('hidden');
+                        return; // Stop execution
+                    }
+                    // Update Photo URL if changed
+                    if(tgUser.photo_url && user.photo !== tgUser.photo_url) {
+                         uRef.update({ photo: tgUser.photo_url });
+                         user.photo = tgUser.photo_url;
+                    }
+                } else {
+                    // Create User
+                    const sp = tg.initDataUnsafe.start_param;
+                    user = { 
+                        id: tgUser.id, 
+                        name: tgUser.first_name, 
+                        username: tgUser.username || '',
+                        photo: tgUser.photo_url || '',
+                        balance: 0, 
+                        refCount: 0, 
+                        refEarn: 0,
+                        isBanned: false 
+                    };
+                    await uRef.set(user);
+                    
+                    // Refer Bonus
+                    if(sp && sp!=user.id) {
+                        try {
+                            db.collection('users').doc(sp).update({
+                                balance: firebase.firestore.FieldValue.increment(3),
+                                refCount: firebase.firestore.FieldValue.increment(1),
+                                refEarn: firebase.firestore.FieldValue.increment(3)
+                            });
+                        } catch(er){}
+                    }
+                }
+
+                // Load Settings
+                try {
+                    const s = await db.collection('settings').doc('config').get();
+                    if(s.exists && s.data().notice) document.getElementById('noticeText').innerText = s.data().notice;
+                } catch(e){}
+
+                updateUI();
+                await loadTasks();
+
+                document.getElementById('splash').style.display = 'none';
+                document.getElementById('app').classList.remove('hidden');
+                document.getElementById('app').classList.remove('opacity-0');
+
+            } catch (error) {
+                document.getElementById('loadingText').innerText = "Error!";
+                alert("App Error: " + error.message);
             }
-
-            // Load Notice
-            db.collection('settings').doc('config').get().then(d => {
-                if(d.exists && d.data().notice) document.getElementById('noticeText').innerText = d.data().notice;
-            });
-
-            updateUI();
-            loadTasks();
-            
-            document.getElementById('splash').style.display = 'none';
-            document.getElementById('app').classList.remove('hidden');
-            document.getElementById('app').classList.remove('opacity-0');
         });
 
         function updateUI() {
+            if(!user) return;
             document.getElementById('balance').innerText = user.balance.toFixed(2);
             document.getElementById('userName').innerText = user.name;
             document.getElementById('userId').innerText = user.id;
             document.getElementById('totalRef').innerText = user.refCount || 0;
             document.getElementById('refEarn').innerText = '৳ ' + (user.refEarn || 0);
             document.getElementById('refLink').value = `https://t.me/DollarKamai_bot?start=${user.id}`;
+            // Set Profile Pic
+            if(user.photo) document.getElementById('userAvatar').src = user.photo;
         }
 
-        // --- UPDATED TASK LOGIC ---
         async function loadTasks() {
             const list = document.getElementById('taskList');
             list.innerHTML = '';
             
-            // 1. Get Active Tasks
-            const taskSnap = await db.collection('tasks').where('active', '==', true).get();
-            // 2. Get User's Completed Tasks
-            const doneSnap = await db.collection('users').doc(user.id.toString()).collection('completed').get();
-            const doneIds = doneSnap.docs.map(d => d.id);
+            const tasks = await db.collection('tasks').where('active','==',true).get();
+            let done = [];
+            try {
+                const dSnap = await db.collection('users').doc(user.id.toString()).collection('completed').get();
+                done = dSnap.docs.map(d=>d.id);
+            } catch(e){}
 
-            let pendingHTML = '';
-            let doneHTML = '';
+            let pendingHTML = '', doneHTML = '';
 
-            taskSnap.forEach(doc => {
+            tasks.forEach(doc => {
                 const t = doc.data();
-                const isDone = doneIds.includes(doc.id);
+                const isDone = done.includes(doc.id);
                 const timer = t.timer || 10;
                 
-                const btnHTML = isDone 
-                    ? `<button class="bg-slate-700 text-gray-400 px-4 py-2 rounded-lg text-xs font-bold cursor-not-allowed">Completed</button>`
+                const btn = isDone 
+                    ? `<button class="bg-slate-700 text-gray-500 px-4 py-2 rounded-lg text-xs font-bold cursor-not-allowed">Completed</button>`
                     : `<button onclick="startTask('${doc.id}', '${t.link}', ${t.reward}, ${timer})" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-emerald-500 shadow">Start</button>`;
-                
-                const itemHTML = `
+
+                const html = `
                 <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center shadow-sm ${isDone ? 'task-done' : ''}">
                     <div class="flex items-center gap-3">
                         <div class="bg-emerald-500/10 p-2.5 rounded-lg text-emerald-500 text-xl"><i class="fa-brands fa-telegram"></i></div>
@@ -245,74 +278,63 @@
                             <h4 class="font-bold text-sm text-gray-200 ${isDone ? 'line-through text-gray-500' : ''}">${t.title}</h4>
                             <div class="flex items-center gap-2 mt-1">
                                 <span class="text-[10px] bg-slate-700 px-2 rounded text-gray-400">⏱️ ${timer}s</span>
-                                <span class="text-[10px] ${isDone ? 'text-gray-500' : 'text-emerald-400'}">৳${t.reward}</span>
+                                <span class="text-[10px] ${isDone?'text-gray-500':'text-emerald-400'}">৳${t.reward}</span>
                             </div>
                         </div>
                     </div>
-                    ${btnHTML}
+                    ${btn}
                 </div>`;
-
-                if(isDone) doneHTML += itemHTML;
-                else pendingHTML += itemHTML;
+                if(isDone) doneHTML += html; else pendingHTML += html;
             });
 
-            // Show Pending first, then Done
             list.innerHTML = pendingHTML + doneHTML;
-            
-            if(!pendingHTML && !doneHTML) list.innerHTML = '<p class="text-center text-gray-500 py-5">কোনো কাজ নেই</p>';
+            if(!pendingHTML && !doneHTML) list.innerHTML = '<p class="text-center text-gray-500 py-5">No tasks available</p>';
         }
 
-        function startTask(taskId, link, reward, seconds) {
+        function startTask(tid, link, rew, sec) {
             window.open(link, '_blank');
-            const modal = document.getElementById('timerModal');
-            const counter = document.getElementById('countdown');
-            modal.classList.add('active');
-            
-            let timeLeft = seconds;
-            counter.innerText = timeLeft + 's';
+            const m = document.getElementById('timerModal');
+            const c = document.getElementById('countdown');
+            m.classList.add('active');
+            let tm = sec; c.innerText = tm+'s';
 
-            const interval = setInterval(async () => {
-                timeLeft--;
-                counter.innerText = timeLeft + 's';
-
-                if(timeLeft <= 0) {
-                    clearInterval(interval);
-                    modal.classList.remove('active');
-                    
+            const int = setInterval(async () => {
+                tm--; c.innerText = tm+'s';
+                if(tm <= 0) {
+                    clearInterval(int);
+                    m.classList.remove('active');
                     try {
-                        const batch = db.batch();
-                        const uRef = db.collection('users').doc(user.id.toString());
+                        const b = db.batch();
+                        const ur = db.collection('users').doc(user.id.toString());
+                        b.update(ur, {balance: firebase.firestore.FieldValue.increment(rew)});
+                        b.set(ur.collection('completed').doc(tid), {date: new Date()});
+                        await b.commit();
                         
-                        // 1. Give Reward
-                        batch.update(uRef, { balance: firebase.firestore.FieldValue.increment(reward) });
-                        // 2. Mark as Completed in Sub-collection
-                        batch.set(uRef.collection('completed').doc(taskId), { date: new Date() });
-
-                        await batch.commit();
-                        
-                        user.balance += reward;
-                        updateUI();
-                        loadTasks(); // Refresh List
-                        showToast(`অভিনন্দন! ৳${reward} যুক্ত হয়েছে`);
-                    } catch(e) { showToast("এরর হয়েছে!"); }
+                        user.balance += rew;
+                        updateUI(); loadTasks();
+                        showToast(`+৳${rew} Added!`);
+                    } catch(e) { showToast("Error: "+e.message); }
                 }
             }, 1000);
         }
 
-        function openLink(u){ window.open(u, '_blank'); }
         function setMethod(m){ selectedMethod=m; document.querySelectorAll('#btn-bkash, #btn-nagad').forEach(b=>b.classList.remove('border-emerald-500','text-emerald-500')); document.getElementById('btn-'+m).classList.add('border-emerald-500','text-emerald-500'); }
         async function withdraw(){
             const n=document.getElementById('wNum').value, a=Number(document.getElementById('wAmount').value);
-            if(!n || a<50 || a>user.balance) return showToast("ইনভ্যালিড রিকোয়েস্ট");
-            await db.collection('withdrawals').add({userId:user.id, userName:user.name, number:n, amount:a, method:selectedMethod, status:'pending', date: new Date()});
-            await db.collection('users').doc(user.id.toString()).update({balance: firebase.firestore.FieldValue.increment(-a)});
-            user.balance-=a; updateUI(); loadHistory(); showToast("সফল!");
+            if(!n || a<50 || a>user.balance) return showToast("Invalid Request");
+            try {
+                await db.collection('withdrawals').add({userId:user.id, userName:user.name, number:n, amount:a, method:selectedMethod, status:'pending', date: new Date()});
+                await db.collection('users').doc(user.id.toString()).update({balance: firebase.firestore.FieldValue.increment(-a)});
+                user.balance-=a; updateUI(); loadHistory(); showToast("Success!");
+            } catch(e) { showToast("Error: "+e.message); }
         }
         async function loadHistory(){
             const d=document.getElementById('historyList'); d.innerHTML='';
             const s=await db.collection('withdrawals').where('userId','==',user.id).orderBy('date','desc').limit(5).get();
             s.forEach(r=>{ const t=r.data(); d.innerHTML+=`<div class="bg-slate-800 p-2 rounded flex justify-between text-xs border border-slate-700"><span>${t.method}-${t.amount}</span><span class="${t.status=='paid'?'text-green-500':'text-yellow-500'} uppercase">${t.status}</span></div>` });
         }
+
+        function openLink(u){ window.open(u, '_blank'); }
         function nav(p){ document.querySelectorAll('.page-section').forEach(e=>e.classList.add('hidden')); document.getElementById(p+'-page').classList.remove('hidden'); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('text-emerald-500')); event.currentTarget.classList.add('text-emerald-500'); if(p=='withdraw') loadHistory(); }
         function copyRef(){ navigator.clipboard.writeText(document.getElementById('refLink').value); showToast("Copied"); }
         function showToast(m){ const t=document.getElementById('toast'); t.innerText=m; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'),3000); }
