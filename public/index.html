@@ -15,7 +15,6 @@
         .loader { border: 3px solid #1e293b; border-top: 3px solid #10b981; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .task-done { opacity: 0.5; filter: grayscale(100%); pointer-events: none; order: 9999; }
-        /* Smooth Marquee */
         .marquee-container { overflow: hidden; white-space: nowrap; }
     </style>
 </head>
@@ -46,7 +45,6 @@
 
     <!-- MAIN APP -->
     <div id="app" class="hidden opacity-0 transition-opacity duration-500">
-        <!-- Header -->
         <header class="bg-gradient-to-b from-slate-800 to-slate-900 p-6 rounded-b-[2.5rem] shadow-2xl border-b border-slate-800">
             <div class="flex justify-between items-center mb-6">
                 <div class="flex items-center gap-3" onclick="nav('profile')">
@@ -62,13 +60,10 @@
                 </div>
             </div>
             
-            <!-- Marquee Notice -->
             <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-2.5 flex items-center gap-3 shadow-inner">
                 <div class="bg-emerald-500/20 p-1.5 rounded-lg text-emerald-400 animate-pulse"><i class="fa-solid fa-bullhorn text-xs"></i></div>
                 <div class="marquee-container w-full overflow-hidden">
-                    <marquee id="noticeText" direction="left" scrollamount="5" class="text-xs text-gray-200 font-medium">
-                        Welcome to Dollar Kamai...
-                    </marquee>
+                    <marquee id="noticeText" direction="left" scrollamount="5" class="text-xs text-gray-200 font-medium">Welcome...</marquee>
                 </div>
             </div>
         </header>
@@ -76,7 +71,8 @@
         <main class="p-5 pb-24">
             <!-- HOME TAB -->
             <div id="home-page" class="page-section">
-                <button onclick="openLink('https://t.me/DollarKamai')" class="w-full bg-gradient-to-r from-blue-600/20 to-blue-900/20 border border-blue-500/30 p-4 rounded-2xl flex items-center justify-between mb-6 group hover:border-blue-500/60 transition shadow-lg">
+                <!-- Channel Button (Dynamic ID) -->
+                <button id="channelBtn" class="w-full bg-gradient-to-r from-blue-600/20 to-blue-900/20 border border-blue-500/30 p-4 rounded-2xl flex items-center justify-between mb-6 group hover:border-blue-500/60 transition shadow-lg">
                     <div class="flex items-center gap-4">
                         <div class="bg-blue-600 p-2.5 rounded-xl text-white shadow-lg shadow-blue-900/50"><i class="fa-brands fa-telegram text-xl"></i></div>
                         <div class="text-left">
@@ -103,40 +99,23 @@
                 </div>
                 <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-xl">
                     <table class="w-full text-left text-sm text-gray-400">
-                        <thead class="bg-slate-700 text-gray-200 text-xs uppercase font-bold">
-                            <tr>
-                                <th class="p-4">Rank</th>
-                                <th class="p-4">User Info</th>
-                                <th class="p-4 text-right">Earning</th>
-                            </tr>
-                        </thead>
+                        <thead class="bg-slate-700 text-gray-200 text-xs uppercase font-bold"><tr><th class="p-4">Rank</th><th class="p-4">User Info</th><th class="p-4 text-right">Earning</th></tr></thead>
                         <tbody id="leaderList" class="divide-y divide-slate-700"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- PROFILE EDIT TAB -->
+            <!-- PROFILE TAB -->
             <div id="profile-page" class="page-section hidden">
                 <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-user-pen text-emerald-500"></i> প্রোফাইল আপডেট</h2>
                 <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg">
                     <div class="text-center mb-6">
                         <img id="editAvatar" src="" class="w-20 h-20 rounded-full mx-auto border-4 border-emerald-500 bg-slate-700">
-                        <p class="text-xs text-gray-500 mt-2">Telegram Profile Photo</p>
                     </div>
-                    
                     <div class="space-y-4">
-                        <div>
-                            <label class="text-xs text-gray-400 font-bold ml-1">আপনার নাম</label>
-                            <input id="editName" type="text" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3 text-white text-sm outline-none focus:border-emerald-500 transition">
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-400 font-bold ml-1">মোবাইল নাম্বার</label>
-                            <input id="editPhone" type="number" placeholder="017xxxxxxxx" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3 text-white text-sm outline-none focus:border-emerald-500 transition">
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-400 font-bold ml-1">ইমেইল এড্রেস</label>
-                            <input id="editEmail" type="email" placeholder="example@gmail.com" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3 text-white text-sm outline-none focus:border-emerald-500 transition">
-                        </div>
+                        <div><label class="text-xs text-gray-400 font-bold ml-1">আপনার নাম</label><input id="editName" type="text" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3 text-white text-sm outline-none focus:border-emerald-500 transition"></div>
+                        <div><label class="text-xs text-gray-400 font-bold ml-1">মোবাইল নাম্বার</label><input id="editPhone" type="number" placeholder="017xxxxxxxx" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3 text-white text-sm outline-none focus:border-emerald-500 transition"></div>
+                        <div><label class="text-xs text-gray-400 font-bold ml-1">ইমেইল এড্রেস</label><input id="editEmail" type="email" placeholder="example@gmail.com" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3 text-white text-sm outline-none focus:border-emerald-500 transition"></div>
                         <button onclick="saveProfile()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-bold shadow-lg shadow-emerald-900/50 transition">তথ্য আপডেট করুন</button>
                     </div>
                 </div>
@@ -148,21 +127,13 @@
                     <img src="https://cdn-icons-png.flaticon.com/512/8832/8832108.png" class="w-20 mx-auto mb-4 animate-bounce">
                     <h2 class="text-xl font-bold mb-2">রেফার করুন</h2>
                     <p class="text-gray-400 text-sm mb-6">বোনাস: <span class="text-emerald-400 font-bold text-lg">৳3</span></p>
-                    
                     <div class="bg-slate-900 p-3 rounded-xl flex items-center gap-2 border border-slate-600 mb-6">
                         <input id="refLink" readonly class="bg-transparent text-xs text-gray-300 w-full outline-none font-mono" value="Loading...">
                         <button onclick="copyRef()" class="bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white p-2 rounded-lg transition"><i class="fa-regular fa-copy text-lg"></i></button>
                     </div>
-                    
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-slate-700/30 p-4 rounded-2xl border border-slate-700">
-                            <p class="text-xs text-gray-400">Total Ref</p>
-                            <h3 id="totalRef" class="text-2xl font-bold mt-1 text-white">0</h3>
-                        </div>
-                        <div class="bg-slate-700/30 p-4 rounded-2xl border border-slate-700">
-                            <p class="text-xs text-gray-400">Earnings</p>
-                            <h3 id="refEarn" class="text-2xl font-bold mt-1 text-emerald-400">৳0</h3>
-                        </div>
+                        <div class="bg-slate-700/30 p-4 rounded-2xl border border-slate-700"><p class="text-xs text-gray-400">Total Ref</p><h3 id="totalRef" class="text-2xl font-bold mt-1 text-white">0</h3></div>
+                        <div class="bg-slate-700/30 p-4 rounded-2xl border border-slate-700"><p class="text-xs text-gray-400">Earnings</p><h3 id="refEarn" class="text-2xl font-bold mt-1 text-emerald-400">৳0</h3></div>
                     </div>
                 </div>
             </div>
@@ -181,15 +152,11 @@
                     </div>
                     <button onclick="withdraw()" class="w-full bg-emerald-600 hover:bg-emerald-500 mt-6 py-3.5 rounded-xl font-bold shadow-lg shadow-emerald-900/50 transition transform active:scale-95">উইথড্র করুন</button>
                 </div>
-                <div class="flex items-center gap-2 mb-3">
-                    <i class="fa-solid fa-clock-rotate-left text-gray-400"></i>
-                    <h3 class="font-bold text-sm text-gray-300">লেনদেন ইতিহাস</h3>
-                </div>
+                <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-clock-rotate-left text-gray-400"></i><h3 class="font-bold text-sm text-gray-300">লেনদেন ইতিহাস</h3></div>
                 <div id="historyList" class="space-y-3"></div>
             </div>
         </main>
 
-        <!-- Navigation Bar -->
         <nav class="fixed bottom-0 w-full bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 flex justify-around py-3 z-40 pb-safe">
             <button onclick="nav('home')" class="nav-btn text-emerald-500 flex flex-col items-center w-16 transition-all transform active:scale-90"><i class="fa-solid fa-house text-xl mb-1"></i> <span class="text-[10px] font-medium">হোম</span></button>
             <button onclick="nav('leader')" class="nav-btn text-gray-500 flex flex-col items-center w-16 transition-all transform active:scale-90"><i class="fa-solid fa-trophy text-xl mb-1"></i> <span class="text-[10px] font-medium">টপ</span></button>
@@ -198,7 +165,6 @@
         </nav>
     </div>
 
-    <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl border border-slate-600 text-sm hidden z-[100] whitespace-nowrap">Message</div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -213,11 +179,10 @@
             messagingSenderId: "278970320528",
             appId: "1:278970320528:web:30d08c635ed9e623f1ba15"
         };
-        
         try { firebase.initializeApp(firebaseConfig); } catch(e){}
         const db = firebase.firestore();
         const tg = window.Telegram.WebApp;
-        let user = null, selectedMethod = 'bkash';
+        let user = null, selectedMethod = 'bkash', channelLink = 'https://t.me/';
 
         document.addEventListener("DOMContentLoaded", async () => {
             try {
@@ -229,7 +194,6 @@
                 if(uSnap.exists) {
                     user = uSnap.data();
                     if(user.isBanned) return document.body.innerHTML = '<div class="h-screen flex items-center justify-center text-red-500 font-bold bg-slate-900">ACCOUNT BANNED</div>';
-                    // Update photo if changed
                     if(tgUser.photo_url && user.photo !== tgUser.photo_url) uRef.update({ photo: tgUser.photo_url });
                 } else {
                     const sp = tg.initDataUnsafe.start_param;
@@ -238,9 +202,19 @@
                     if(sp && sp!=user.id) db.collection('users').doc(sp).update({balance: firebase.firestore.FieldValue.increment(3), refCount: firebase.firestore.FieldValue.increment(1)});
                 }
 
+                // Load Settings (Notice & Channel Link)
                 try {
                     const s = await db.collection('settings').doc('config').get();
-                    if(s.exists && s.data().notice) document.getElementById('noticeText').innerText = s.data().notice;
+                    if(s.exists) {
+                        if(s.data().notice) document.getElementById('noticeText').innerText = s.data().notice;
+                        if(s.data().channelLink) {
+                            channelLink = s.data().channelLink;
+                            // Update Channel Button Action
+                            document.getElementById('channelBtn').onclick = function() {
+                                window.open(channelLink, '_blank');
+                            };
+                        }
+                    }
                 } catch(e){}
 
                 updateUI();
@@ -261,11 +235,7 @@
             document.getElementById('totalRef').innerText = user.refCount || 0;
             document.getElementById('refEarn').innerText = '৳ ' + (user.refEarn || 0);
             document.getElementById('refLink').value = `https://t.me/DollarKamai_bot?start=${user.id}`;
-            if(user.photo) {
-                document.getElementById('userAvatar').src = user.photo;
-                document.getElementById('editAvatar').src = user.photo;
-            }
-            // Populate Edit Fields
+            if(user.photo) { document.getElementById('userAvatar').src = user.photo; document.getElementById('editAvatar').src = user.photo; }
             document.getElementById('editName').value = user.name;
             document.getElementById('editPhone').value = user.phone || '';
             document.getElementById('editEmail').value = user.email || '';
@@ -275,19 +245,8 @@
             const name = document.getElementById('editName').value;
             const phone = document.getElementById('editPhone').value;
             const email = document.getElementById('editEmail').value;
-            
             if(!name) return showToast("নাম খালি রাখা যাবে না");
-
-            try {
-                await db.collection('users').doc(user.id.toString()).update({
-                    name: name,
-                    phone: phone,
-                    email: email
-                });
-                user.name = name; user.phone = phone; user.email = email;
-                updateUI();
-                showToast("প্রোফাইল আপডেট হয়েছে!");
-            } catch(e) { showToast("Error saving profile"); }
+            try { await db.collection('users').doc(user.id.toString()).update({ name: name, phone: phone, email: email }); user.name = name; user.phone = phone; user.email = email; updateUI(); showToast("প্রোফাইল আপডেট হয়েছে!"); } catch(e) { showToast("Error saving profile"); }
         }
 
         async function loadLeaderboard() {
@@ -296,19 +255,8 @@
             l.innerHTML = '';
             let rank = 1;
             s.forEach(d => { 
-                const u = d.data(); 
-                const pic = u.photo || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-                l.innerHTML+=`
-                <tr class="border-b border-slate-700/50 hover:bg-slate-800/50 transition">
-                    <td class="p-4">
-                        ${rank==1?'🥇':(rank==2?'🥈':(rank==3?'🥉':`<span class="bg-slate-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">${rank}</span>`))}
-                    </td>
-                    <td class="p-4 flex items-center gap-3">
-                        <img src="${pic}" class="w-8 h-8 rounded-full border border-slate-600 bg-slate-700">
-                        <div><p class="text-sm font-bold text-white">${u.name}</p></div>
-                    </td>
-                    <td class="p-4 text-right font-bold text-emerald-400">৳${u.balance.toFixed(0)}</td>
-                </tr>`;
+                const u = d.data(); const pic = u.photo || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                l.innerHTML+=`<tr class="border-b border-slate-700/50 hover:bg-slate-800/50 transition"><td class="p-4">${rank==1?'🥇':(rank==2?'🥈':(rank==3?'🥉':`<span class="bg-slate-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">${rank}</span>`))}</td><td class="p-4 flex items-center gap-3"><img src="${pic}" class="w-8 h-8 rounded-full border border-slate-600 bg-slate-700"><div><p class="text-sm font-bold text-white">${u.name}</p></div></td><td class="p-4 text-right font-bold text-emerald-400">৳${u.balance.toFixed(0)}</td></tr>`;
                 rank++;
             });
         }
@@ -355,21 +303,8 @@
             const s=await db.collection('withdrawals').where('userId','==',user.id).orderBy('date','desc').limit(10).get();
             s.forEach(r=>{ 
                 const t=r.data(); 
-                // Reason Display Logic
                 const reasonHtml = (t.status === 'rejected' && t.reason) ? `<div class="mt-1 text-[10px] text-red-300 bg-red-500/10 p-1 rounded">কারণ: ${t.reason}</div>` : '';
-                
-                d.innerHTML+=`
-                <div class="bg-slate-800 p-3 rounded-xl border border-slate-700 shadow-sm">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="text-xs font-bold text-gray-300">${t.method} - ${t.number}</span>
-                        <span class="${t.status=='paid'?'text-green-500':(t.status=='rejected'?'text-red-500':'text-yellow-500')} text-[10px] uppercase font-bold bg-slate-900 px-2 py-0.5 rounded">${t.status}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-[10px] text-gray-500">${new Date(t.date.seconds*1000).toLocaleDateString()}</span>
-                        <span class="text-sm font-bold text-white">৳${t.amount}</span>
-                    </div>
-                    ${reasonHtml}
-                </div>`; 
+                d.innerHTML+=`<div class="bg-slate-800 p-3 rounded-xl border border-slate-700 shadow-sm"><div class="flex justify-between items-center mb-1"><span class="text-xs font-bold text-gray-300">${t.method} - ${t.number}</span><span class="${t.status=='paid'?'text-green-500':(t.status=='rejected'?'text-red-500':'text-yellow-500')} text-[10px] uppercase font-bold bg-slate-900 px-2 py-0.5 rounded">${t.status}</span></div><div class="flex justify-between items-center"><span class="text-[10px] text-gray-500">${new Date(t.date.seconds*1000).toLocaleDateString()}</span><span class="text-sm font-bold text-white">৳${t.amount}</span></div>${reasonHtml}</div>`; 
             });
         }
 
