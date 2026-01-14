@@ -70,7 +70,24 @@
         <main class="p-5 pb-24">
             <!-- Home -->
             <div id="home-page" class="page-section">
-                <button id="channelBtn" class="w-full bg-gradient-to-r from-blue-600/20 to-blue-900/20 border border-blue-500/30 p-4 rounded-2xl flex items-center justify-between mb-6 group hover:border-blue-500/60 transition shadow-lg"><div class="flex items-center gap-4"><div class="bg-blue-600 p-2.5 rounded-xl text-white shadow-lg shadow-blue-900/50"><i class="fa-brands fa-telegram text-xl"></i></div><div class="text-left"><h4 class="font-bold text-sm text-blue-100">অফিসিয়াল চ্যানেল</h4><p class="text-[10px] text-blue-300">জয়েন করে আপডেট থাকুন</p></div></div><i class="fa-solid fa-chevron-right text-blue-400 group-hover:translate-x-1 transition"></i></button>
+                <!-- Channel Button -->
+                <button id="channelBtn" class="w-full bg-gradient-to-r from-blue-600/20 to-blue-900/20 border border-blue-500/30 p-4 rounded-2xl flex items-center justify-between mb-4 group hover:border-blue-500/60 transition shadow-lg">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-blue-600 p-2.5 rounded-xl text-white shadow-lg shadow-blue-900/50"><i class="fa-brands fa-telegram text-xl"></i></div>
+                        <div class="text-left"><h4 class="font-bold text-sm text-blue-100">অফিসিয়াল চ্যানেল</h4><p class="text-[10px] text-blue-300">জয়েন করে আপডেট থাকুন</p></div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-blue-400 group-hover:translate-x-1 transition"></i>
+                </button>
+
+                <!-- Spin Game Button (Hidden by default) -->
+                <button id="spinGameBtn" onclick="location.href='spin.html'" class="w-full bg-gradient-to-r from-purple-600/20 to-purple-900/20 border border-purple-500/30 p-4 rounded-2xl flex items-center justify-between mb-6 group hover:border-purple-500/60 transition shadow-lg hidden">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-purple-600 p-2.5 rounded-xl text-white shadow-lg shadow-purple-900/50"><i class="fa-solid fa-dharmachakra text-xl animate-spin-slow"></i></div>
+                        <div class="text-left"><h4 class="font-bold text-sm text-purple-100">লাকি স্পিন</h4><p class="text-[10px] text-purple-300">গেম খেলুন ও জিতুন</p></div>
+                    </div>
+                    <span class="bg-purple-600 text-white text-[10px] font-bold px-3 py-1 rounded-full">Play</span>
+                </button>
+
                 <div class="flex items-center justify-between mb-4"><h3 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-layer-group text-yellow-500"></i> টাস্ক লিস্ট</h3><span class="text-xs text-gray-500 bg-slate-800 px-2 py-1 rounded-lg">Realtime</span></div>
                 <div id="taskList" class="flex flex-col gap-3"><div class="loader mx-auto mt-10"></div></div>
             </div>
@@ -192,6 +209,9 @@
                 if(config.referBonus) document.getElementById('refBonusShow').innerText = config.referBonus;
                 if(config.minWithdraw) { minWithdraw = config.minWithdraw; }
                 document.getElementById('minWText').innerText = minWithdraw;
+                
+                // Show/Hide Spin Game
+                if(config.showSpin) document.getElementById('spinGameBtn').classList.remove('hidden');
 
                 updateUI(); await loadTasks(); loadMethods();
                 document.getElementById('splash').style.display = 'none';
