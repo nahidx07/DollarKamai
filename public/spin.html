@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Spin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { background-color: #0f172a; color: white; overflow: hidden; }
+        .wheel-container { position: relative; width: 300px; height: 300px; margin: 20px auto; }
+        .wheel { width: 100%; height: 100%; border-radius: 50%; border: 5px solid #fbbf24; transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67); background: conic-gradient(
+            #ef4444 0deg 72deg,    /* 1x */
+            #3b82f6 72deg 144deg,  /* 2x */
+            #10b981 144deg 216deg, /* 5x */
+            #a855f7 216deg 288deg, /* 10x */
+            #fbbf24 288deg 360deg  /* 40x */
+        ); }
+        .pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid white; z-index: 10; }
+        .btn-bet { transition: transform 0.1s; }
+        .btn-bet:active { transform: scale(0.95); }
+    </style>
+</head>
+<body class="flex flex-col h-screen">
+
+    <div class="p-4 flex justify-between bg-slate-800">
+        <h2 class="font-bold text-yellow-400">Balance: <span id="bal">0</span> 🪙</h2>
+        <div id="status" class="text-xs font-bold px-2 py-1 rounded bg-green-600">BETTING</div>
+    </div>
+
+    <!-- WHEEL -->
+    <div class="wheel-container">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel"></div>
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <h1 id="timer" class="text-4xl font-bold text-white drop-shadow-md">10</h1>
+        </div>
+    </div>
+
+    <!-- BETTING PANEL -->
+    <div class="mt-auto bg-slate-800 p-4 rounded-t-3xl shadow-2xl">
+        <p class="text-center text-xs text-gray-400 mb-2">Select Amount</p>
+        <div class="flex justify-center gap-2 mb-4">
+            <button onclick="setAmt(10)" class="amt-btn bg-slate-700 px-3 py-1 rounded text-xs border border-transparent hover:border-yellow-500">10</button>
+            <button onclick="setAmt(50)" class="amt-btn bg-slate-700 px-3 py-1 rounded text-xs border border-transparent hover:border-yellow-500">50</button>
+            <button onclick="setAmt(100)" class="amt-btn bg-slate-700 px-3 py-1 rounded text-xs border border-transparent hover:border-yellow-500">100</button>
+        </div>
+
+        <p class="text-center text-xs text-gray-400 mb-2">Place Bet On</p>
+        <div class="grid grid-cols-5 gap-2">
+            <button onclick="placeBet(1)" class="btn-bet bg-red-500 p-2 rounded text-white font-bold flex flex-col items-center"><span>1x</span><span class="text-[8px] mt-1 my-bet" id="bet-1">0</span></button>
+            <button onclick="placeBet(2)" class="btn-bet bg-blue-500 p-2 rounded text-white font-bold flex flex-col items-center"><span>2x</span><span class="text-[8px] mt-1 my-bet" id="bet-2">0</span></button>
+            <button onclick="placeBet(5)" class="btn-bet bg-green-500 p-2 rounded text-white font-bold flex flex-col items-center"><span>5x</span><span class="text-[8px] mt-1 my-bet" id="bet-5">0</span></button>
+            <button onclick="placeBet(10)" class="btn-bet bg-purple-500 p-2 rounded text-white font-bold flex flex-col items-center"><span>10x</span><span class="text-[8px] mt-1 my-bet" id="bet-10">0</span></button>
+            <button onclick="placeBet(40)" class="btn-bet bg-yellow-500 p-2 rounded text-black font-bold flex flex-col items-center"><span>40x</span><span class="text-[8px] mt-1 my-bet" id="bet-40">0</span></button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
+        // ⚠️⚠️ Firebase Config Here ⚠️⚠️
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const tg = window.Telegram.WebApp;
+        
+        let userId = 123456; // Default for test
+        let selectedAmt = 10;
+        let isSpinning = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            tg.expand();
+            if(tg.initDataUnsafe.user) userId = tg.initDataUnsafe.user.id;
+            
+            // 1. Listen to Game State
+            db.collection('gamestate').doc('live_round').onSnapshot(doc => {
+                if(!doc.exists) { initGame(); return; }
+                const data = doc.data();
+                
+                // Update Status
+                document.getElementById('status').innerText = data.status;
+                
+                // If Spinning & Not already spinning
+                if(data.status === 'SPINNING' && !isSpinning) {
+                    spinWheel(data.winner);
+                }
+                
+                // If Betting, show timer countdown (Approx)
+                if(data.status === 'BETTING') {
+                    resetWheel();
+                    // Simple logic to trigger resolve if I am the admin or random user
+                    // In production, use a Cron Job or robust timer
+                }
+            });
+
+            // 2. Listen to Balance
+            db.collection('users').doc(userId.toString()).onSnapshot(doc => {
+                if(doc.exists) document.getElementById('bal').innerText = doc.data().balance || 0;
+            });
+            
+            startLocalTimer();
+        });
+
+        function setAmt(n) { selectedAmt=n; document.querySelectorAll('.amt-btn').forEach(b=>b.classList.remove('border-yellow-500')); event.target.classList.add('border-yellow-500'); }
+
+        async function placeBet(mult) {
+            if(isSpinning) return alert("Wait for next round!");
+            
+            // Call API
+            fetch('/api/spin', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ action: 'PLACE_BET', userId: userId.toString(), betOn: mult, amount: selectedAmt })
+            }).then(res => res.json()).then(data => {
+                if(data.success) {
+                    const el = document.getElementById('bet-'+mult);
+                    el.innerText = parseInt(el.innerText) + selectedAmt;
+                } else {
+                    alert("Error: " + (data.error || 'Failed'));
+                }
+            });
+        }
+
+        function spinWheel(winner) {
+            isSpinning = true;
+            const wheel = document.getElementById('wheel');
+            // Mapping multipliers to degrees (Approx logic)
+            const map = { 1: 36, 2: 108, 5: 180, 10: 252, 40: 324 }; 
+            const deg = 3600 + map[winner]; // 10 spins + target
+            
+            wheel.style.transform = `rotate(${deg}deg)`;
+            
+            setTimeout(() => {
+                alert(`Winner: ${winner}x`);
+                // Reset Game Call
+                fetch('/api/spin', { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action: 'RESET_GAME' }) });
+            }, 4500);
+        }
+
+        function resetWheel() {
+            isSpinning = false;
+            document.getElementById('wheel').style.transition = 'none';
+            document.getElementById('wheel').style.transform = 'rotate(0deg)';
+            setTimeout(() => document.getElementById('wheel').style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67)', 100);
+            document.querySelectorAll('.my-bet').forEach(e => e.innerText='0');
+        }
+
+        // Initialize Game if not exists
+        function initGame() {
+            fetch('/api/spin', { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action: 'RESET_GAME' }) });
+        }
+
+        // Local Timer to simulate live feel and trigger backend
+        function startLocalTimer() {
+            let t = 10;
+            setInterval(() => {
+                if(!isSpinning) {
+                    document.getElementById('timer').innerText = t;
+                    t--;
+                    if(t < 0) {
+                        t = 15; // Wait time
+                        // Trigger Result Calculation (Only one user needs to do this ideally, but for MVP it's okay)
+                        fetch('/api/spin', { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action: 'RESOLVE_GAME' }) });
+                    }
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
