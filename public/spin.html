@@ -9,7 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         body { background-color: #0f172a; color: white; overflow: hidden; user-select: none; }
-        .wheel-container { position: relative; width: 280px; height: 280px; margin: 20px auto; }
+        .wheel-container { position: relative; width: 280px; height: 280px; margin: 30px auto; }
         .wheel { 
             width: 100%; height: 100%; border-radius: 50%; border: 4px solid #f59e0b;
             background: conic-gradient(
@@ -21,72 +21,65 @@
             );
             transition: transform 5s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
-        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); z-index: 20; color: white; filter: drop-shadow(0 2px 2px black); }
-        .btn-bet:active { transform: scale(0.95); }
-        
-        /* History Bar Scroll */
-        .history-scroll { display: flex; gap: 5px; overflow-x: auto; padding: 5px; -ms-overflow-style: none; scrollbar-width: none; }
-        .history-scroll::-webkit-scrollbar { display: none; }
-        .badge-1 { background: #ef4444; } .badge-2 { background: #3b82f6; }
-        .badge-5 { background: #10b981; } .badge-10 { background: #a855f7; }
-        .badge-40 { background: #f59e0b; color: black; }
+        .pointer { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); z-index: 20; color: white; font-size: 40px; filter: drop-shadow(0 2px 2px black); }
+        .badge-1{background:#ef4444} .badge-2{background:#3b82f6} .badge-5{background:#10b981} .badge-10{background:#a855f7} .badge-40{background:#f59e0b;color:black}
+        .amt-btn.active { background-color: #eab308; color: black; border-color: #eab308; }
     </style>
 </head>
 <body class="flex flex-col h-screen">
 
-    <!-- HEADER -->
+    <!-- Header -->
     <div class="p-3 flex justify-between items-center bg-slate-800 border-b border-slate-700">
         <button onclick="history.back()" class="text-gray-400"><i class="fa-solid fa-arrow-left"></i></button>
-        <div class="font-bold text-yellow-400 flex items-center gap-1"><i class="fa-solid fa-coins"></i> <span id="bal">0</span></div>
-        <div id="statusBadge" class="text-[10px] font-bold px-2 py-1 rounded bg-green-600">LIVE</div>
+        <div class="font-bold text-yellow-400 flex items-center gap-1"><i class="fa-solid fa-coins"></i> <span id="bal">...</span></div>
+        <div id="statusBadge" class="text-[10px] font-bold px-2 py-1 rounded bg-gray-600">CONNECTING...</div>
     </div>
 
-    <!-- HISTORY BAR (NEW) -->
+    <!-- History -->
     <div class="bg-slate-900 py-2 border-b border-slate-700">
-        <p class="text-[10px] text-gray-500 text-center mb-1 uppercase tracking-widest">Last 20 Results</p>
-        <div id="historyBar" class="history-scroll justify-center">
-            <!-- Dynamic Badges will appear here -->
-            <span class="text-xs text-gray-600">No history yet...</span>
+        <div id="historyBar" class="flex justify-center gap-1 overflow-hidden px-2">
+            <span class="text-xs text-gray-500">Waiting for history...</span>
         </div>
     </div>
 
-    <!-- WHEEL -->
+    <!-- Wheel -->
     <div class="flex-1 relative flex flex-col justify-center items-center">
         <div class="wheel-container">
-            <div class="pointer"><i class="fa-solid fa-caret-down text-4xl"></i></div>
+            <div class="pointer"><i class="fa-solid fa-caret-down"></i></div>
             <div class="wheel" id="wheel"></div>
             <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div class="bg-slate-900 w-12 h-12 rounded-full flex items-center justify-center border-2 border-slate-700 shadow-xl z-10">
-                    <h1 id="timer" class="text-xl font-bold text-white">Wait</h1>
+                <div class="bg-slate-900 w-14 h-14 rounded-full flex items-center justify-center border-2 border-slate-700 shadow-xl z-10">
+                    <h1 id="timer" class="text-xl font-bold text-white">..</h1>
                 </div>
             </div>
         </div>
+        <p id="msg" class="text-xs text-gray-400 mt-2">অপেক্ষা করুন...</p>
     </div>
 
-    <!-- BETTING PANEL -->
+    <!-- Controls -->
     <div class="bg-slate-800 p-4 rounded-t-3xl shadow-2xl z-20">
         <div class="flex justify-center gap-2 mb-4">
-            <button onclick="setAmt(10)" class="amt-btn bg-slate-700 text-gray-300 px-3 py-1 rounded text-xs border border-transparent">10</button>
+            <button onclick="setAmt(10)" class="amt-btn active bg-slate-700 text-gray-300 px-3 py-1 rounded text-xs border border-transparent">10</button>
             <button onclick="setAmt(50)" class="amt-btn bg-slate-700 text-gray-300 px-3 py-1 rounded text-xs border border-transparent">50</button>
             <button onclick="setAmt(100)" class="amt-btn bg-slate-700 text-gray-300 px-3 py-1 rounded text-xs border border-transparent">100</button>
             <button onclick="setAmt(500)" class="amt-btn bg-slate-700 text-gray-300 px-3 py-1 rounded text-xs border border-transparent">500</button>
         </div>
         <div class="grid grid-cols-5 gap-2">
-            <button onclick="placeBet(1)" class="btn-bet bg-red-600 p-2 rounded-lg text-white font-bold flex flex-col items-center shadow border-b-4 border-red-800">1x<span class="text-[8px] mt-1 bg-black/20 px-1 rounded font-normal" id="bet-1">0</span></button>
-            <button onclick="placeBet(2)" class="btn-bet bg-blue-600 p-2 rounded-lg text-white font-bold flex flex-col items-center shadow border-b-4 border-blue-800">2x<span class="text-[8px] mt-1 bg-black/20 px-1 rounded font-normal" id="bet-2">0</span></button>
-            <button onclick="placeBet(5)" class="btn-bet bg-emerald-600 p-2 rounded-lg text-white font-bold flex flex-col items-center shadow border-b-4 border-emerald-800">5x<span class="text-[8px] mt-1 bg-black/20 px-1 rounded font-normal" id="bet-5">0</span></button>
-            <button onclick="placeBet(10)" class="btn-bet bg-purple-600 p-2 rounded-lg text-white font-bold flex flex-col items-center shadow border-b-4 border-purple-800">10x<span class="text-[8px] mt-1 bg-black/20 px-1 rounded font-normal" id="bet-10">0</span></button>
-            <button onclick="placeBet(40)" class="btn-bet bg-yellow-500 p-2 rounded-lg text-black font-bold flex flex-col items-center shadow border-b-4 border-yellow-700">40x<span class="text-[8px] mt-1 bg-black/20 px-1 rounded font-normal" id="bet-40">0</span></button>
+            <button onclick="placeBet(1)" class="bg-red-600 p-2 rounded-lg text-white font-bold flex flex-col items-center shadow border-b-4 border-red-800 active:border-b-0 active:translate-y-1">1x<span id="b1" class="text-[8px] font-normal">0</span></button>
+            <button onclick="placeBet(2)" class="bg-blue-600 p-2 rounded-lg text-white font-bold flex flex-col items-center shadow border-b-4 border-blue-800 active:border-b-0 active:translate-y-1">2x<span id="b2" class="text-[8px] font-normal">0</span></button>
+            <button onclick="placeBet(5)" class="bg-emerald-600 p-2 rounded-lg text-white font-bold flex flex-col items-center shadow border-b-4 border-emerald-800 active:border-b-0 active:translate-y-1">5x<span id="b5" class="text-[8px] font-normal">0</span></button>
+            <button onclick="placeBet(10)" class="bg-purple-600 p-2 rounded-lg text-white font-bold flex flex-col items-center shadow border-b-4 border-purple-800 active:border-b-0 active:translate-y-1">10x<span id="b10" class="text-[8px] font-normal">0</span></button>
+            <button onclick="placeBet(40)" class="bg-yellow-500 p-2 rounded-lg text-black font-bold flex flex-col items-center shadow border-b-4 border-yellow-700 active:border-b-0 active:translate-y-1">40x<span id="b40" class="text-[8px] font-normal">0</span></button>
         </div>
     </div>
 
-    <!-- TOAST -->
-    <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded shadow-lg hidden z-50 text-xs">Msg</div>
+    <!-- Toast -->
+    <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 bg-slate-800/90 text-white px-4 py-2 rounded-full text-xs hidden shadow-xl z-50"></div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script>
-        // ⚠️⚠️⚠️ FIREBASE CONFIG HERE ⚠️⚠️⚠️
+        // ⚠️⚠️⚠️ FIREBASE CONFIG ⚠️⚠️⚠️
         const firebaseConfig = {
             apiKey: "AIzaSyCgVhOPt9w6UhZWop6QLmq7AO3cpZtsQmI",
             authDomain: "dollarkamai1.firebaseapp.com",
@@ -97,82 +90,132 @@
         };
         try{firebase.initializeApp(firebaseConfig);}catch(e){}
         const db = firebase.firestore(); const tg = window.Telegram.WebApp;
-        let userId = 123456, selectedAmt = 10, isSpinning = false, targetTime = 0, currentRotation = 0;
-        const winAngles = { 1: 360-36, 2: 360-108, 5: 360-180, 10: 360-252, 40: 360-324 };
+
+        let userId = 123456, selectedAmt = 10, isSpinning = false, targetTime = 0, currentRot = 0;
+        const angles = { 1: 360-36, 2: 360-108, 5: 360-180, 10: 360-252, 40: 360-324 };
 
         document.addEventListener('DOMContentLoaded', () => {
-            tg.expand(); if(tg.initDataUnsafe.user) userId = tg.initDataUnsafe.user.id;
-            setAmt(10);
+            tg.expand();
+            if(tg.initDataUnsafe.user) userId = tg.initDataUnsafe.user.id;
 
-            // Balance Listener
-            db.collection('users').doc(userId.toString()).onSnapshot(d => { if(d.exists) document.getElementById('bal').innerText = d.data().balance||0; });
+            // 1. Balance Update
+            db.collection('users').doc(userId.toString()).onSnapshot(d => { 
+                if(d.exists) document.getElementById('bal').innerText = d.data().balance || 0; 
+            });
 
-            // Game State Listener
-            db.collection('gamestate').doc('live_round').onSnapshot(doc => {
-                if(!doc.exists) { initGame(); return; }
+            // 2. GAME LOGIC (Auto Start)
+            const gameRef = db.collection('gamestate').doc('live_round');
+            
+            gameRef.onSnapshot(async doc => {
+                // যদি ডাটাবেসে গেম না থাকে, তবে তৈরি করো
+                if(!doc.exists) { 
+                    document.getElementById('msg').innerText = "Starting Game System...";
+                    await fetch('/api/spin', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'INIT_GAME'}) });
+                    return; 
+                }
+
                 const data = doc.data();
-                if(data.nextRoundTime) targetTime = data.nextRoundTime;
-                
-                // Update History UI
                 renderHistory(data.history || []);
 
+                // TIME SYNC
+                if(data.nextRoundTime) targetTime = data.nextRoundTime;
+
                 if(data.status === 'SPINNING') {
-                    document.getElementById('statusBadge').innerText = "SPINNING";
-                    document.getElementById('statusBadge').className = "text-[10px] font-bold px-2 py-1 rounded bg-red-600 animate-pulse";
-                    if(!isSpinning) spinWheel(data.winner);
+                    // যদি স্পিনিং স্ট্যাটাস থাকে কিন্তু চাকা না ঘোরে, তবে ঘোরান
+                    if(!isSpinning) {
+                        document.getElementById('statusBadge').innerText = "SPINNING";
+                        document.getElementById('statusBadge').className = "text-[10px] font-bold px-2 py-1 rounded bg-red-600 animate-pulse";
+                        spinWheel(data.winner);
+                    }
                 } else {
-                    document.getElementById('statusBadge').innerText = "BETTING";
+                    // বেটিং স্ট্যাটাস
+                    document.getElementById('statusBadge').innerText = "LIVE BETTING";
                     document.getElementById('statusBadge').className = "text-[10px] font-bold px-2 py-1 rounded bg-green-600";
-                    if(isSpinning) resetGameUI();
+                    if(isSpinning) resetUI();
                 }
             });
+
             setInterval(updateTimer, 1000);
         });
 
-        // Render History Badges
-        function renderHistory(history) {
-            const container = document.getElementById('historyBar');
-            if(history.length === 0) return;
-            
-            let html = '';
-            history.forEach(num => {
-                html += `<div class="badge-${num} w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 border border-slate-700 shadow-sm">${num}</div>`;
-            });
-            container.innerHTML = html;
-        }
-
         function updateTimer() {
-            if(isSpinning) { document.getElementById('timer').innerText = ".."; return; }
-            const diff = Math.ceil((targetTime - Date.now()) / 1000);
-            if(diff > 0) document.getElementById('timer').innerText = diff;
-            else { 
+            if(isSpinning) { document.getElementById('timer').innerText = "Wait"; return; }
+            
+            const now = Date.now();
+            const diff = Math.ceil((targetTime - now) / 1000);
+
+            if(diff > 0) {
+                document.getElementById('timer').innerText = diff;
+                document.getElementById('msg').innerText = "বেট ধরুন!";
+            } else {
                 document.getElementById('timer').innerText = "0";
-                if(diff === 0 || diff === -1) fetch('/api/spin', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'RESOLVE_GAME'}) });
+                document.getElementById('msg').innerText = "রেজাল্ট তৈরি হচ্ছে...";
+                
+                // সময় শেষ হলে সার্ভারকে কল দেওয়া (রেজাল্টের জন্য)
+                if(diff <= 0 && diff > -3) { // Spam prevent
+                    fetch('/api/spin', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'RESOLVE_GAME'}) });
+                }
             }
         }
 
         function spinWheel(winner) {
             isSpinning = true;
-            const extra = Math.floor(Math.random()*20)-10;
-            currentRotation += (360*5) + (winAngles[winner] - (currentRotation%360)) + extra;
-            document.getElementById('wheel').style.transform = `rotate(${currentRotation}deg)`;
-            setTimeout(() => { 
+            document.getElementById('msg').innerText = "চাকা ঘুরছে...";
+            
+            // Rotation Logic
+            const extra = Math.floor(Math.random()*20) - 10; 
+            currentRot += (360 * 5) + (angles[winner] - (currentRot % 360)) + extra;
+            document.getElementById('wheel').style.transform = `rotate(${currentRot}deg)`;
+
+            setTimeout(() => {
                 showToast(`Winner: ${winner}x`);
-                if(Math.random()<0.3) fetch('/api/spin', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'RESET_GAME'}) });
-            }, 5500);
+                // 5 সেকেন্ড পর নতুন রাউন্ড শুরু করার রিকোয়েস্ট
+                setTimeout(() => {
+                    fetch('/api/spin', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'RESET_GAME'}) });
+                }, 2000);
+            }, 5000);
+        }
+
+        function resetUI() {
+            isSpinning = false;
+            [1,2,5,10,40].forEach(i => document.getElementById('b'+i).innerText='0');
         }
 
         function placeBet(m) {
-            if(isSpinning) return showToast("Wait next round");
-            document.getElementById('bet-'+m).innerText = parseInt(document.getElementById('bet-'+m).innerText) + selectedAmt;
-            fetch('/api/spin', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'PLACE_BET', userId:userId.toString(), betOn:m, amount:selectedAmt}) })
-            .then(r=>r.json()).then(d=>{ if(!d.success) { document.getElementById('bet-'+m).innerText -= selectedAmt; showToast(d.error); } });
+            if(isSpinning) return showToast("পরের রাউন্ডে চেষ্টা করুন");
+            // UI Update Immediate
+            const el = document.getElementById('b'+m);
+            el.innerText = parseInt(el.innerText) + selectedAmt;
+
+            fetch('/api/spin', { 
+                method:'POST', 
+                headers:{'Content-Type':'application/json'}, 
+                body:JSON.stringify({action:'PLACE_BET', userId:userId.toString(), betOn:m, amount:selectedAmt}) 
+            }).then(r=>r.json()).then(d => {
+                if(!d.success) {
+                    el.innerText = parseInt(el.innerText) - selectedAmt; // Revert
+                    showToast(d.error || "Failed");
+                }
+            });
         }
 
-        function resetGameUI() { isSpinning = false; [1,2,5,10,40].forEach(i=>document.getElementById('bet-'+i).innerText='0'); }
-        function setAmt(n) { selectedAmt=n; document.querySelectorAll('.amt-btn').forEach(b=>{ b.classList.remove('bg-yellow-500','text-black'); b.classList.add('bg-slate-700','text-gray-300'); }); event.target.classList.add('bg-yellow-500','text-black'); }
-        function initGame() { fetch('/api/spin', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'RESET_GAME'}) }); }
-        function showToast(m) { const t=document.getElementById('toast'); t.innerText=m; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'),2000); }
+        function setAmt(n) {
+            selectedAmt = n;
+            document.querySelectorAll('.amt-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function renderHistory(hist) {
+            const h = document.getElementById('historyBar');
+            if(!hist.length) return;
+            h.innerHTML = hist.map(n => `<div class="badge-${n} w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shadow">${n}</div>`).join('');
+        }
+
+        function showToast(m) {
+            const t = document.getElementById('toast');
+            t.innerText = m; t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 2000);
+        }
     </script>
 </body>
 </html>
