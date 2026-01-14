@@ -140,7 +140,14 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script>
         // ⚠️⚠️⚠️ Firebase Config Here ⚠️⚠️⚠️
-        
+        const firebaseConfig = {
+            apiKey: "AIzaSyCgVhOPt9w6UhZWop6QLmq7AO3cpZtsQmI",
+            authDomain: "dollarkamai1.firebaseapp.com",
+            projectId: "dollarkamai1",
+            storageBucket: "dollarkamai1.firebasestorage.app",
+            messagingSenderId: "278970320528",
+            appId: "1:278970320528:web:30d08c635ed9e623f1ba15"
+        };
         try { firebase.initializeApp(firebaseConfig); } catch(e){}
         const auth = firebase.auth(); const db = firebase.firestore();
 
@@ -177,14 +184,7 @@
             const d=document.getElementById('taskList'); d.innerHTML='<div class="text-center text-gray-500">Loading...</div>';
             const s=await db.collection('tasks').where('active','==',true).get(); d.innerHTML='';
             s.forEach(o=>{
-             const firebaseConfig = {
-            apiKey: "AIzaSyCgVhOPt9w6UhZWop6QLmq7AO3cpZtsQmI",
-            authDomain: "dollarkamai1.firebaseapp.com",
-            projectId: "dollarkamai1",
-            storageBucket: "dollarkamai1.firebasestorage.app",
-            messagingSenderId: "278970320528",
-            appId: "1:278970320528:web:30d08c635ed9e623f1ba15"
-        };   const t=o.data();
+                const t=o.data();
                 d.innerHTML+=`
                 <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center group hover:border-yellow-500/30 transition">
                     <div><div class="font-bold text-white text-sm">${t.title} <span class="ml-2 text-[10px] bg-slate-700 px-2 py-0.5 rounded text-yellow-500">⏱️ ${t.timer}s</span></div><div class="text-xs text-gray-500 mt-1 truncate max-w-[200px]">${t.link}</div></div>
