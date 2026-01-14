@@ -22,7 +22,7 @@
 
     <div id="splash" class="fixed inset-0 bg-slate-900 z-[100] flex flex-col items-center justify-center">
         <i class="fa-solid fa-coins text-6xl text-yellow-500 mb-4 animate-bounce"></i>
-        <h1 class="text-2xl font-bold text-white tracking-wide">ডলার কামাই</h1>
+        <h1 class="text-2xl font-bold text-white tracking-wide">কয়েন আর্নিং</h1>
         <p class="text-gray-400 text-sm mt-2">লোড হচ্ছে...</p>
     </div>
 
@@ -119,6 +119,7 @@
                         <input type="number" id="wNum" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3.5 text-white text-sm outline-none focus:border-yellow-500 transition" placeholder="একাউন্ট নাম্বার (বিকাশ/নগদ)">
                         <input type="number" id="wAmount" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3.5 text-white text-sm outline-none focus:border-yellow-500 transition" placeholder="কয়েন পরিমাণ (Coin Amount)">
                     </div>
+                    <p class="text-xs text-gray-400 mt-2 text-right">Min: <span id="minWText" class="text-yellow-400 font-bold">...</span></p>
                     <button onclick="withdraw()" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black mt-6 py-3.5 rounded-xl font-bold shadow-lg transition transform active:scale-95">উইথড্র রিকোয়েস্ট</button>
                 </div>
                 <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-clock-rotate-left text-gray-400"></i><h3 class="font-bold text-sm text-gray-300">লেনদেন ইতিহাস</h3></div><div id="historyList" class="space-y-3"></div>
@@ -149,7 +150,7 @@
         };
         try { firebase.initializeApp(firebaseConfig); } catch(e){}
         const db = firebase.firestore(); const tg = window.Telegram.WebApp;
-        let user = null, selectedMethod = '', channelLink='https://t.me/';
+        let user = null, selectedMethod = '', channelLink='https://t.me/', minWithdraw = 50000;
 
         document.addEventListener("DOMContentLoaded", async () => {
             try {
@@ -167,7 +168,7 @@
                 }
                 if(config.maintenance) { showBlock('Maintenance Mode', 'অ্যাপের কাজ চলছে, কিছুক্ষণ পর চেষ্টা করুন।', 'fa-screwdriver-wrench'); return; }
 
-                // User Logic (Dynamic Refer Bonus)
+                // User Logic
                 const tgUser = tg.initDataUnsafe.user || { id: 123456, first_name: "Demo", username: "User", photo_url: "" };
                 const uRef = db.collection('users').doc(tgUser.id.toString());
                 const uSnap = await uRef.get();
@@ -180,9 +181,8 @@
                     const sp = tg.initDataUnsafe.start_param;
                     user = { id: tgUser.id, name: tgUser.first_name, photo: tgUser.photo_url||'', balance: 0, refCount: 0, refEarn: 0, isBanned: false };
                     await uRef.set(user);
-                    // Give Dynamic Bonus
                     if(sp && sp!=user.id) {
-                        const bonus = config.referBonus || 50; // Default 50 if not set
+                        const bonus = config.referBonus || 50; 
                         db.collection('users').doc(sp).update({balance: firebase.firestore.FieldValue.increment(bonus), refCount: firebase.firestore.FieldValue.increment(1)});
                     }
                 }
@@ -190,6 +190,8 @@
                 if(config.notice) document.getElementById('noticeText').innerText = config.notice;
                 if(config.channelLink) { channelLink = config.channelLink; document.getElementById('channelBtn').onclick = () => window.open(channelLink, '_blank'); }
                 if(config.referBonus) document.getElementById('refBonusShow').innerText = config.referBonus;
+                if(config.minWithdraw) { minWithdraw = config.minWithdraw; }
+                document.getElementById('minWText').innerText = minWithdraw;
 
                 updateUI(); await loadTasks(); loadMethods();
                 document.getElementById('splash').style.display = 'none';
@@ -257,7 +259,9 @@
 
         async function withdraw(){
             const n=document.getElementById('wNum').value, a=Number(document.getElementById('wAmount').value);
-            if(!selectedMethod) return showToast("Select Method"); if(a<100 || a>user.balance) return showToast("Invalid Coin Amount");
+            if(!selectedMethod) return showToast("Select Method"); 
+            if(a < minWithdraw) return showToast("Minimum " + minWithdraw + " Coins");
+            if(a > user.balance) return showToast("Not enough Coins");
             await db.collection('withdrawals').add({userId:user.id, userName:user.name, number:n, amount:a, method:selectedMethod, status:'pending', date:new Date()});
             await db.collection('users').doc(user.id.toString()).update({balance: firebase.firestore.FieldValue.increment(-a)}); user.balance-=a; updateUI(); loadHistory(); showToast("Request Sent!");
         }
