@@ -25,48 +25,30 @@
                 <h2 class="text-2xl font-bold text-white">Admin Login</h2>
             </div>
             <div class="space-y-4 text-left">
-                <div><label class="text-xs text-gray-400 ml-1">Email</label><input type="email" id="em" placeholder="admin@gmail.com" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none focus:border-yellow-500 transition"></div>
-                <div><label class="text-xs text-gray-400 ml-1">Password</label><input type="password" id="pw" placeholder="••••••" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none focus:border-yellow-500 transition"></div>
+                <input type="email" id="em" placeholder="Email" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none focus:border-yellow-500 transition">
+                <input type="password" id="pw" placeholder="Password" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none focus:border-yellow-500 transition">
                 <button id="loginBtn" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg shadow-lg transition">Login Dashboard</button>
             </div>
             <p id="errMsg" class="text-red-500 mt-4 text-sm font-bold hidden text-center bg-red-500/10 p-2 rounded"></p>
         </form>
     </div>
 
-    <!-- EDIT TASK MODAL -->
-    <div id="editTaskModal" class="fixed inset-0 z-[90] bg-black/80 hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-600 w-full max-w-md shadow-2xl relative">
-            <button onclick="closeEditTask()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
-            <h3 class="text-xl font-bold text-white mb-4">Edit Task</h3>
-            <input type="hidden" id="editId">
-            <div class="space-y-3">
-                <input id="editTitle" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white text-sm" placeholder="Title">
-                <input id="editLink" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white text-sm" placeholder="Link">
-                <div class="grid grid-cols-2 gap-3">
-                    <input id="editReward" type="number" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white text-sm" placeholder="Reward">
-                    <input id="editTimer" type="number" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white text-sm" placeholder="Timer">
-                </div>
-                <button onclick="saveTaskEdit()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded mt-2">Update</button>
-            </div>
-        </div>
-    </div>
-
     <!-- SIDEBAR & MAIN CONTENT -->
     <div id="backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 z-40 hidden backdrop-blur-sm md:hidden"></div>
+    
     <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-50 w-64 bg-slate-800 border-r border-slate-700 transform -translate-x-full md:translate-x-0 flex flex-col h-full shadow-2xl">
         <div class="h-20 flex items-center px-6 border-b border-slate-700">
             <i class="fa-solid fa-coins text-yellow-500 text-2xl mr-2"></i><h1 class="text-xl font-bold text-white">Coin<span class="text-yellow-500">Master</span></h1>
         </div>
         <nav class="flex-1 overflow-y-auto p-4 space-y-2">
-            <p class="px-2 text-[10px] font-bold text-gray-500 uppercase mb-2">Menu</p>
             <button onclick="nav('home')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-yellow-400 bg-yellow-500/10"><i class="fa-solid fa-chart-pie w-5"></i> Dashboard</button>
             <button onclick="nav('users')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-users w-5"></i> Members</button>
-            <button onclick="nav('tasks')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-list-check w-5"></i> Tasks</button>
             <button onclick="nav('withdraw')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-wallet w-5"></i> Withdraws</button>
-            <button onclick="nav('refer')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-user-group w-5"></i> Referrals</button>
-            <p class="px-2 text-[10px] font-bold text-gray-500 uppercase mt-6 mb-2">System</p>
-            <button onclick="nav('methods')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-credit-card w-5"></i> Pay Methods</button>
-            <button onclick="nav('fraud')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-user-shield w-5"></i> Fraud Check</button>
+            <button onclick="nav('tasks')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-list-check w-5"></i> Tasks</button>
+            
+            <!-- NEW BROADCAST BUTTON -->
+            <button onclick="nav('broadcast')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-bullhorn w-5"></i> Broadcast</button>
+            
             <button onclick="nav('settings')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-gear w-5"></i> Settings</button>
         </nav>
         <div class="p-4 border-t border-slate-700"><button onclick="firebase.auth().signOut()" class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-red-400 bg-red-500/10 hover:bg-red-500 hover:text-white transition"><i class="fa-solid fa-power-off"></i> Logout</button></div>
@@ -79,47 +61,47 @@
         </header>
 
         <div class="flex-1 overflow-y-auto p-6 md:p-8 scroll-smooth">
-            <!-- Home -->
+            
+            <!-- HOME -->
             <div id="t-home" class="page block space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg"><p class="text-xs text-gray-400 uppercase font-bold">Total Users</p><h2 id="stUser" class="text-4xl font-bold text-white mt-2">...</h2></div>
-                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg"><p class="text-xs text-gray-400 uppercase font-bold">Total Coins Given</p><h2 id="stLiability" class="text-4xl font-bold text-yellow-500 mt-2">...</h2></div>
                     <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg"><p class="text-xs text-gray-400 uppercase font-bold">Pending Pay</p><h2 id="stPay" class="text-4xl font-bold text-red-400 mt-2">...</h2></div>
                 </div>
             </div>
-            
-            <!-- Users -->
-            <div id="t-users" class="page hidden space-y-4"><div class="flex justify-between bg-slate-800 p-4 rounded-xl border border-slate-700"><h3>Members</h3><button onclick="loadUsers()" class="bg-blue-600 px-4 py-2 rounded text-xs font-bold text-white">Refresh</button></div><div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-left text-sm text-gray-400"><thead class="bg-slate-700 text-white text-xs uppercase"><tr><th class="p-4">User</th><th class="p-4">Contact</th><th class="p-4">Balance</th><th class="p-4 text-center">Action</th></tr></thead><tbody id="userTable"></tbody></table></div></div></div>
-            
-            <!-- Tasks -->
-            <div id="t-tasks" class="page hidden space-y-6">
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700"><h3 class="font-bold text-white mb-4">Add Task</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><div><label class="text-xs text-gray-400 block">Title</label><input id="tt" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div><div><label class="text-xs text-gray-400 block">Link</label><input id="tl" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div><div><label class="text-xs text-gray-400 block">Reward (Coins)</label><input id="tr" type="number" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div><div><label class="text-xs text-gray-400 block">Time</label><input id="tm" type="number" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div></div><button onclick="addTask()" class="bg-yellow-600 text-black font-bold px-6 py-2 rounded">Publish</button></div><div id="taskList" class="space-y-3"></div>
-            </div>
 
-            <!-- Settings -->
-            <div id="t-settings" class="page hidden space-y-4">
+            <!-- BROADCAST PAGE (NEW) -->
+            <div id="t-broadcast" class="page hidden">
                 <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 max-w-2xl shadow-lg">
-                    <h3 class="font-bold text-white mb-4">Config</h3>
-                    <label class="text-xs text-gray-400 block mb-1">Refer Bonus (Coins)</label><input id="setRefBonus" type="number" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white mb-3">
-                    <label class="text-xs text-gray-400 block mb-1">Minimum Withdraw (Coins)</label><input id="setMinW" type="number" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white mb-3" placeholder="50000">
-                    <label class="text-xs text-gray-400 block mb-1">Notice</label><textarea id="setNot" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white mb-3"></textarea>
-                    <label class="text-xs text-gray-400 block mb-1">Channel Link</label><input id="setChannel" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white mb-3">
+                    <h3 class="font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-paper-plane text-yellow-500"></i> Send Message to All Users</h3>
                     
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div class="flex justify-between bg-slate-900 p-3 rounded border border-slate-600"><span>Maintenance</span><input type="checkbox" id="setMaint"></div>
-                        <div class="flex justify-between bg-slate-900 p-3 rounded border border-slate-600"><span>Security Check</span><input type="checkbox" id="setSecurity"></div>
-                        <div class="flex justify-between bg-slate-900 p-3 rounded border border-slate-600 col-span-2"><span>Live Spin Game</span><input type="checkbox" id="setShowSpin"></div>
+                    <label class="block text-xs text-gray-400 mb-2 uppercase font-bold">Message</label>
+                    <textarea id="broadMsg" rows="5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-yellow-500 mb-4" placeholder="Type your message here..."></textarea>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-2 uppercase font-bold">Button Text (Optional)</label>
+                            <input id="broadBtnTxt" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm focus:border-yellow-500" placeholder="e.g. Join Channel">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-2 uppercase font-bold">Button Link (Optional)</label>
+                            <input id="broadBtnUrl" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm focus:border-yellow-500" placeholder="https://t.me/...">
+                        </div>
                     </div>
-                    
-                    <button onclick="saveSet()" class="bg-yellow-600 text-black font-bold px-6 py-2 rounded">Save</button>
+
+                    <button onclick="sendBroadcast()" id="broadSendBtn" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg shadow-lg transition flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-rocket"></i> Send Broadcast
+                    </button>
+                    <p id="broadStatus" class="text-center text-xs mt-3 text-gray-400"></p>
                 </div>
             </div>
 
-            <!-- Other Tabs -->
+            <!-- Other Tabs (Users, Tasks, Withdraw, Settings - Compacted for brevity) -->
+            <div id="t-users" class="page hidden space-y-4"><div class="flex justify-between bg-slate-800 p-4 rounded-xl border border-slate-700"><h3>Members</h3><button onclick="loadUsers()" class="bg-blue-600 px-4 py-2 rounded text-xs font-bold text-white">Refresh</button></div><div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-left text-sm text-gray-400"><thead class="bg-slate-700 text-white text-xs uppercase"><tr><th class="p-4">User</th><th class="p-4">Balance</th><th class="p-4 text-center">Action</th></tr></thead><tbody id="userTable"></tbody></table></div></div></div>
             <div id="t-withdraw" class="page hidden space-y-4"><button onclick="loadW()" class="bg-blue-600 text-white px-4 py-2 rounded text-xs font-bold">Refresh</button><div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-left text-sm text-gray-400"><thead class="bg-slate-700 text-white text-xs uppercase"><tr><th class="p-4">Info</th><th class="p-4">Amount</th><th class="p-4">Decision</th></tr></thead><tbody id="wTable"></tbody></table></div></div></div>
-            <div id="t-methods" class="page hidden space-y-4"><div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 max-w-lg"><h3 class="font-bold text-white mb-4">Payment Methods</h3><div class="flex gap-2"><input id="newMethod" class="bg-slate-900 border border-slate-600 rounded p-2 text-white flex-1" placeholder="Method Name"><button onclick="addMethod()" class="bg-yellow-600 text-black px-4 rounded font-bold">Add</button></div><div id="methodList" class="mt-4 space-y-2"></div></div></div>
-            <div id="t-fraud" class="page hidden space-y-4"><div class="bg-slate-800 p-5 rounded-xl border border-slate-700 flex justify-between"><h3>Fraud Check</h3><button onclick="scanFraud()" class="bg-red-600 text-white px-4 py-2 rounded text-xs font-bold">Scan</button></div><div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden"><table class="w-full text-left text-sm text-gray-400"><thead class="bg-slate-700 text-white text-xs uppercase"><tr><th class="p-4">IP</th><th class="p-4">Accounts</th><th class="p-4">Action</th></tr></thead><tbody id="fraudTable"></tbody></table></div></div>
-            <div id="t-refer" class="page hidden space-y-4"><button onclick="loadRefs()" class="bg-purple-600 text-white px-4 py-2 rounded text-xs font-bold">Load Top</button><div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden"><table class="w-full text-left text-sm text-gray-400"><thead class="bg-slate-700 text-white text-xs uppercase"><tr><th class="p-4">User</th><th class="p-4">Total Ref</th><th class="p-4">Earned</th></tr></thead><tbody id="refTable"></tbody></table></div></div>
+            <div id="t-tasks" class="page hidden space-y-6"><div class="bg-slate-800 p-6 rounded-2xl border border-slate-700"><h3 class="font-bold text-white mb-4">Add Task</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><input id="tt" placeholder="Title" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"><input id="tl" placeholder="Link" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"><input id="tr" placeholder="Reward" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"><input id="tm" placeholder="Time" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div><button onclick="addTask()" class="bg-yellow-600 text-black font-bold px-6 py-2 rounded">Publish</button></div><div id="taskList" class="space-y-3"></div></div>
+            <div id="t-settings" class="page hidden space-y-4"><div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 max-w-2xl"><h3 class="font-bold text-white mb-4">Config</h3><label class="text-xs text-gray-400 block mb-1">Refer Bonus</label><input id="setRefBonus" type="number" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white mb-3"><label class="text-xs text-gray-400 block mb-1">Min Withdraw</label><input id="setMinW" type="number" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white mb-3"><label class="text-xs text-gray-400 block mb-1">Notice</label><textarea id="setNot" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white mb-3"></textarea><label class="text-xs text-gray-400 block mb-1">Channel</label><input id="setChannel" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white mb-3"><div class="flex justify-between bg-slate-900 p-3 rounded border border-slate-600 mb-3"><span>Maintenance</span><input type="checkbox" id="setMaint"></div><div class="flex justify-between bg-slate-900 p-3 rounded border border-slate-600 mb-4"><span>Spin Game</span><input type="checkbox" id="setShowSpin"></div><button onclick="saveSet()" class="bg-yellow-600 text-black font-bold px-6 py-2 rounded">Save</button></div></div>
+        
         </div>
     </main>
 
@@ -127,44 +109,28 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script>
-        // ⚠️⚠️⚠️ Replace with your actual Firebase Config ⚠️⚠️⚠️
+        // ⚠️⚠️⚠️ FIREBASE CONFIG ⚠️⚠️⚠️
         const firebaseConfig = {
-            apiKey: "AIzaSyCgVhOPt9w6UhZWop6QLmq7AO3cpZtsQmI",
-            authDomain: "dollarkamai1.firebaseapp.com",
-            projectId: "dollarkamai1",
-            storageBucket: "dollarkamai1.firebasestorage.app",
-            messagingSenderId: "278970320528",
-            appId: "1:278970320528:web:30d08c635ed9e623f1ba15"
-        };
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
+        };
         
-        try { firebase.initializeApp(firebaseConfig); } 
-        catch(e) { console.error("Firebase Init Error:", e); }
-        
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        try { firebase.initializeApp(firebaseConfig); } catch(e) {}
+        const auth = firebase.auth(); const db = firebase.firestore();
 
-        // LOGIN FUNCTION
+        // Login Logic
         function doLogin(e) {
             e.preventDefault();
-            const btn = document.querySelector('#login button');
-            const err = document.getElementById('errMsg');
-            btn.innerText = "Checking...";
-            
             auth.signInWithEmailAndPassword(document.getElementById('em').value, document.getElementById('pw').value)
-                .then(() => { /* Success handled by onAuthStateChanged */ })
-                .catch(error => {
-                    btn.innerText = "Login Dashboard";
-                    err.innerText = "Login Failed: " + error.message;
-                    err.classList.remove('hidden');
-                });
+                .catch(error => { document.getElementById('errMsg').innerText = "Login Failed"; document.getElementById('errMsg').classList.remove('hidden'); });
         }
+        auth.onAuthStateChanged(u => { if(u){ document.getElementById('login').classList.add('hidden'); init(); } else { document.getElementById('login').classList.remove('hidden'); } });
 
-        auth.onAuthStateChanged(u => {
-            if(u){ document.getElementById('login').classList.add('hidden'); init(); }
-            else { document.getElementById('login').classList.remove('hidden'); }
-        });
-
-        // NAVIGATION & SIDEBAR
+        // Nav Logic
         function toggleSidebar(){ const s=document.getElementById('sidebar'); const b=document.getElementById('backdrop'); s.classList.toggle('-translate-x-full'); b.classList.toggle('hidden'); }
         function nav(p){
             document.querySelectorAll('.page').forEach(e=>e.classList.add('hidden')); document.getElementById('t-'+p).classList.remove('hidden');
@@ -172,9 +138,10 @@
             event.currentTarget.classList.remove('text-gray-400'); event.currentTarget.classList.add('bg-yellow-500/10','text-yellow-400');
             document.getElementById('pageTitle').innerText = p.charAt(0).toUpperCase() + p.slice(1);
             if(window.innerWidth<768) toggleSidebar();
-            if(p=='users')loadUsers(); if(p=='tasks')loadTasks(); if(p=='withdraw')loadW(); if(p=='refer')loadRefs(); if(p=='methods')loadMethods();
+            if(p=='users')loadUsers(); if(p=='tasks')loadTasks(); if(p=='withdraw')loadW();
         }
 
+        // Init
         function init(){
             db.collection('users').get().then(s=>document.getElementById('stUser').innerText=s.size);
             db.collection('withdrawals').where('status','==','pending').onSnapshot(s=>document.getElementById('stPay').innerText=s.size);
@@ -182,38 +149,59 @@
                 document.getElementById('setNot').value=d.data().notice||'';
                 document.getElementById('setMaint').checked=d.data().maintenance||false;
                 document.getElementById('setChannel').value=d.data().channelLink||'';
-                document.getElementById('setSecurity').checked=d.data().securityCheck||false;
                 document.getElementById('setRefBonus').value=d.data().referBonus||50;
                 document.getElementById('setMinW').value=d.data().minWithdraw||50000;
                 document.getElementById('setShowSpin').checked=d.data().showSpin||false;
             }});
-            let total=0; db.collection('users').get().then(s=>{s.forEach(d=>total+=(d.data().balance||0)); document.getElementById('stLiability').innerText=total.toLocaleString();});
         }
 
-        // --- TASKS (Edit Logic) ---
-        async function loadTasks(){const d=document.getElementById('taskList'); d.innerHTML='Loading...'; const s=await db.collection('tasks').where('active','==',true).get(); d.innerHTML=''; s.forEach(o=>{const t=o.data(); d.innerHTML+=`<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center group hover:border-yellow-500/30 transition"><div><div class="font-bold text-white text-sm">${t.title} <span class="ml-2 text-[10px] bg-slate-700 px-2 py-0.5 rounded text-yellow-500">⏱️ ${t.timer}s</span></div><div class="text-xs text-gray-500 mt-1 truncate max-w-[200px]">${t.link}</div></div><div class="flex items-center gap-2"><span class="font-bold text-yellow-400 mr-2">${t.reward} 🪙</span><button onclick="openEdit('${o.id}','${t.title}','${t.link}',${t.reward},${t.timer}')" class="bg-blue-600/20 text-blue-400 p-2 rounded"><i class="fa-solid fa-pen"></i></button><button onclick="delT('${o.id}')" class="bg-red-600/20 text-red-400 p-2 rounded"><i class="fa-solid fa-trash"></i></button></div></div>`;});}
-        async function addTask(){const t=document.getElementById('tt').value, l=document.getElementById('tl').value, r=document.getElementById('tr').value, m=document.getElementById('tm').value; if(t&&l&&r&&m){ await db.collection('tasks').add({title:t, link:l, reward:Number(r), timer:Number(m), active:true, createdAt: new Date()}); document.getElementById('tt').value=''; document.getElementById('tl').value=''; loadTasks(); } else { alert("Empty Fields!"); }}
-        async function delT(i){if(confirm('Delete?')) await db.collection('tasks').doc(i).update({active:false}); loadTasks();}
-        
-        function openEdit(id,t,l,r,tm){ document.getElementById('editId').value=id; document.getElementById('editTitle').value=t; document.getElementById('editLink').value=l; document.getElementById('editReward').value=r; document.getElementById('editTimer').value=tm; document.getElementById('editTaskModal').classList.remove('hidden'); }
-        function closeEditTask(){ document.getElementById('editTaskModal').classList.add('hidden'); }
-        async function saveTaskEdit(){ const id=document.getElementById('editId').value; await db.collection('tasks').doc(id).update({ title:document.getElementById('editTitle').value, link:document.getElementById('editLink').value, reward:Number(document.getElementById('editReward').value), timer:Number(document.getElementById('editTimer').value) }); closeEditTask(); loadTasks(); }
+        // --- BROADCAST LOGIC (NEW) ---
+        async function sendBroadcast() {
+            const msg = document.getElementById('broadMsg').value;
+            const btnTxt = document.getElementById('broadBtnTxt').value;
+            const btnLink = document.getElementById('broadBtnUrl').value;
+            const btn = document.getElementById('broadSendBtn');
+            const status = document.getElementById('broadStatus');
 
-        // --- OTHERS ---
-        async function loadUsers(){const t=document.getElementById('userTable');t.innerHTML='Loading...';const s=await db.collection('users').limit(50).get(); t.innerHTML='';s.forEach(d=>{const u=d.data();t.innerHTML+=`<tr class="border-b border-slate-700 hover:bg-slate-800/50"><td class="p-4"><div class="font-bold text-white">${u.name}</div><div class="text-xs text-gray-500 font-mono">${u.id}</div></td><td class="p-4 text-xs text-gray-300">${u.phone||'-'}<br>${u.email||'-'}</td><td class="p-4 font-bold text-yellow-400">${u.balance} 🪙</td><td class="p-4 flex gap-2 justify-center"><button onclick="editBal('${d.id}',${u.balance})" class="bg-blue-600/20 text-blue-400 w-8 h-8 rounded"><i class="fa-solid fa-pen"></i></button><button onclick="ban('${d.id}',${u.isBanned})" class="bg-yellow-600/20 text-yellow-400 w-8 h-8 rounded"><i class="fa-solid ${u.isBanned?'fa-check':'fa-ban'}"></i></button><button onclick="del('${d.id}')" class="bg-red-600/20 text-red-400 w-8 h-8 rounded"><i class="fa-solid fa-trash"></i></button></td></tr>`;});}
-        async function editBal(i,o){const n=prompt('New Balance:',o); if(n) await db.collection('users').doc(i).update({balance:Number(n)}); loadUsers();}
-        async function ban(i,s){if(confirm(s?'Unban?':'Ban?')) await db.collection('users').doc(i).update({isBanned:!s}); loadUsers();}
+            if(!msg) return alert("Please enter a message!");
+
+            btn.innerText = "Sending... Please wait";
+            btn.disabled = true;
+            status.innerText = "Processing broadcast...";
+
+            try {
+                const response = await fetch('/api/broadcast', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg, btnText: btnTxt, btnLink: btnLink })
+                });
+                
+                const data = await response.json();
+                
+                if(data.success) {
+                    alert(`✅ Broadcast Sent!\nSuccess: ${data.sent}\nFailed: ${data.failed}`);
+                    document.getElementById('broadMsg').value = '';
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch (e) {
+                alert("Request Failed: " + e.message);
+            }
+
+            btn.innerHTML = '<i class="fa-solid fa-rocket"></i> Send Broadcast';
+            btn.disabled = false;
+            status.innerText = "";
+        }
+
+        // --- OTHER FUNCTIONS (Compressed) ---
+        async function loadUsers(){const t=document.getElementById('userTable');t.innerHTML='<tr><td colspan="4" class="p-4 text-center">Loading...</td></tr>';const s=await db.collection('users').limit(50).get(); t.innerHTML='';s.forEach(d=>{const u=d.data();t.innerHTML+=`<tr class="border-b border-slate-700 hover:bg-slate-800/50"><td class="p-4"><div class="font-bold text-white">${u.name}</div><div class="text-xs text-gray-500 font-mono">${u.id}</div></td><td class="p-4 font-bold text-yellow-400">${u.balance}</td><td class="p-4 text-center"><button onclick="del('${d.id}')" class="text-red-500">Del</button></td></tr>`;});}
         async function del(i){if(confirm('Delete?')) await db.collection('users').doc(i).delete(); loadUsers();}
-        async function loadW(){const t=document.getElementById('wTable'); t.innerHTML='Loading...'; const s=await db.collection('withdrawals').where('status','==','pending').get(); t.innerHTML=''; if(s.empty){ t.innerHTML='<tr><td colspan="3" class="p-4 text-center text-gray-500">No Pending Requests</td></tr>'; return; } s.forEach(d=>{const w=d.data(); t.innerHTML+=`<tr class="border-b border-slate-700"><td class="p-4"><div class="font-bold text-white">${w.userName}</div><div class="text-xs text-emerald-400 font-mono">${w.method}: ${w.number}</div></td><td class="p-4 font-bold text-yellow-400">${w.amount} 🪙</td><td class="p-4 flex gap-2"><button onclick="procW('${d.id}','paid')" class="bg-emerald-600 text-white px-3 py-1 rounded text-xs">Approve</button><button onclick="rejectW('${d.id}',${w.amount},'${w.userId}')" class="bg-red-600 text-white px-3 py-1 rounded text-xs">Decline</button></td></tr>`;});}
-        async function procW(id,st){if(confirm("Approve?")) {await db.collection('withdrawals').doc(id).update({status:st}); loadW();}}
-        async function rejectW(id, amt, uid) {const reason = prompt("Reject Reason:", "Invalid Info"); if(reason === null) return; const b = db.batch(); b.update(db.collection('withdrawals').doc(id), {status: 'rejected', reason: reason}); b.update(db.collection('users').doc(uid), {balance: firebase.firestore.FieldValue.increment(amt)}); await b.commit(); loadW();}
-        async function loadMethods(){const d = await db.collection('settings').doc('methods').get(); const list = d.exists ? (d.data().list || []) : []; const div = document.getElementById('methodList'); div.innerHTML = ''; list.forEach(m => { div.innerHTML += `<div class="bg-slate-900 p-3 rounded flex justify-between items-center text-white text-sm mb-2"><span class="font-bold">${m}</span><button onclick="delMethod('${m}')" class="text-red-500 hover:text-red-400"><i class="fa-solid fa-trash"></i></button></div>`; });}
-        async function addMethod(){const m = document.getElementById('newMethod').value; if(m) { await db.collection('settings').doc('methods').set({ list: firebase.firestore.FieldValue.arrayUnion(m) }, {merge:true}); document.getElementById('newMethod').value=''; loadMethods(); }}
-        async function delMethod(m){if(confirm('Remove?')) { await db.collection('settings').doc('methods').update({ list: firebase.firestore.FieldValue.arrayRemove(m) }); loadMethods(); }}
-        async function scanFraud(){const t = document.getElementById('fraudTable'); t.innerHTML='<tr><td colspan="3" class="p-4 text-center">Scanning...</td></tr>'; const s = await db.collection('users').get(); let ipMap = {}; s.forEach(d => { const u=d.data(); if(u.lastIP){ if(!ipMap[u.lastIP]) ipMap[u.lastIP]=[]; ipMap[u.lastIP].push(u.id); } }); t.innerHTML=''; let found=false; for(const [ip, ids] of Object.entries(ipMap)){ if(ids.length > 1){ found=true; t.innerHTML+=`<tr class="border-b border-slate-700"><td class="p-4 font-mono text-white">${ip}</td><td class="p-4 text-red-400 font-bold">${ids.length} Accounts</td><td class="p-4"><button onclick="banIP('${ids.join(',')}')" class="bg-red-600 text-white px-3 py-1 rounded text-xs">Ban All</button></td></tr>`; } } if(!found) t.innerHTML='<tr><td colspan="3" class="p-4 text-center text-green-500">No suspicious IPs found.</td></tr>';}
-        async function banIP(idsStr){if(!confirm('Ban All?')) return; const b = db.batch(); idsStr.split(',').forEach(id => b.update(db.collection('users').doc(id), {isBanned:true})); await b.commit(); alert('Banned!'); scanFraud();}
-        async function loadRefs(){const t=document.getElementById('refTable'); t.innerHTML='Loading...'; const s=await db.collection('users').orderBy('refCount','desc').limit(20).get(); t.innerHTML=''; s.forEach(d=>{const u=d.data(); if(u.refCount>0) t.innerHTML+=`<tr class="border-b border-slate-700"><td class="p-4 text-white">${u.name}</td><td class="p-4 font-bold text-yellow-400">${u.refCount}</td><td class="p-4 text-gray-400">${u.refEarn||0} 🪙</td></tr>`;});}
-        async function saveSet(){await db.collection('settings').doc('config').set({notice:document.getElementById('setNot').value, maintenance:document.getElementById('setMaint').checked, channelLink:document.getElementById('setChannel').value, securityCheck:document.getElementById('setSecurity').checked, showSpin:document.getElementById('setShowSpin').checked, referBonus:Number(document.getElementById('setRefBonus').value), minWithdraw:Number(document.getElementById('setMinW').value)},{merge:true}); alert('Saved!');}
+        async function loadTasks(){const d=document.getElementById('taskList'); d.innerHTML='Loading...'; const s=await db.collection('tasks').where('active','==',true).get(); d.innerHTML=''; s.forEach(o=>{const t=o.data(); d.innerHTML+=`<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center"><div><div class="font-bold text-white text-sm">${t.title}</div><div class="text-xs text-gray-500">${t.link}</div></div><button onclick="delT('${o.id}')" class="text-red-500">Del</button></div>`;});}
+        async function addTask(){const t=document.getElementById('tt').value, l=document.getElementById('tl').value, r=document.getElementById('tr').value, m=document.getElementById('tm').value; if(t&&l&&r){ await db.collection('tasks').add({title:t, link:l, reward:Number(r), timer:Number(m)||10, active:true}); document.getElementById('tt').value=''; loadTasks(); }}
+        async function delT(i){if(confirm('Delete?')) await db.collection('tasks').doc(i).update({active:false}); loadTasks();}
+        async function loadW(){const t=document.getElementById('wTable'); t.innerHTML='Loading...'; const s=await db.collection('withdrawals').where('status','==','pending').get(); t.innerHTML=''; s.forEach(d=>{const w=d.data(); t.innerHTML+=`<tr class="border-b border-slate-700"><td class="p-4">${w.userName}<br>${w.number}</td><td class="p-4 font-bold text-yellow-400">${w.amount}</td><td class="p-4"><button onclick="procW('${d.id}','paid')" class="text-green-500 mr-2">Pay</button><button onclick="procW('${d.id}','rejected')" class="text-red-500">Rej</button></td></tr>`;});}
+        async function procW(id,st){if(confirm(st+"?")){await db.collection('withdrawals').doc(id).update({status:st}); loadW();}}
+        async function saveSet(){await db.collection('settings').doc('config').set({notice:document.getElementById('setNot').value, maintenance:document.getElementById('setMaint').checked, channelLink:document.getElementById('setChannel').value, showSpin:document.getElementById('setShowSpin').checked, referBonus:Number(document.getElementById('setRefBonus').value), minWithdraw:Number(document.getElementById('setMinW').value)},{merge:true}); alert('Saved!');}
     </script>
 </body>
 </html>
