@@ -12,7 +12,6 @@
         .sidebar { transition: transform 0.3s ease-in-out; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        ::-webkit-scrollbar-track { background: #1e293b; }
     </style>
 </head>
 <body class="overflow-hidden h-screen flex">
@@ -27,15 +26,32 @@
             <div class="space-y-4 text-left">
                 <input type="email" id="em" placeholder="Email" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none focus:border-yellow-500 transition">
                 <input type="password" id="pw" placeholder="Password" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none focus:border-yellow-500 transition">
-                <button id="loginBtn" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg shadow-lg transition">Login Dashboard</button>
+                <button id="loginBtn" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg shadow-lg transition">Login</button>
             </div>
-            <p id="errMsg" class="text-red-500 mt-4 text-sm font-bold hidden text-center bg-red-500/10 p-2 rounded"></p>
+            <p id="errMsg" class="text-red-500 mt-4 text-sm hidden"></p>
         </form>
     </div>
 
-    <!-- SIDEBAR & MAIN CONTENT -->
+    <!-- TASK EDIT MODAL -->
+    <div id="editTaskModal" class="fixed inset-0 z-[90] bg-black/80 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-600 w-full max-w-md shadow-2xl relative">
+            <button onclick="document.getElementById('editTaskModal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-blue-500"></i> Edit Task</h3>
+            <input type="hidden" id="editId">
+            <div class="space-y-3">
+                <div><label class="text-xs text-gray-400">Title</label><input id="editTitle" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
+                <div><label class="text-xs text-gray-400">Link</label><input id="editLink" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="text-xs text-gray-400">Reward</label><input id="editReward" type="number" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
+                    <div><label class="text-xs text-gray-400">Timer</label><input id="editTimer" type="number" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
+                </div>
+                <button onclick="saveTaskEdit()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded mt-2">Update Task</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
     <div id="backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 z-40 hidden backdrop-blur-sm md:hidden"></div>
-    
     <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-50 w-64 bg-slate-800 border-r border-slate-700 transform -translate-x-full md:translate-x-0 flex flex-col h-full shadow-2xl">
         <div class="h-20 flex items-center px-6 border-b border-slate-700">
             <i class="fa-solid fa-coins text-yellow-500 text-2xl mr-2"></i><h1 class="text-xl font-bold text-white">Coin<span class="text-yellow-500">Master</span></h1>
@@ -43,17 +59,15 @@
         <nav class="flex-1 overflow-y-auto p-4 space-y-2">
             <button onclick="nav('home')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-yellow-400 bg-yellow-500/10"><i class="fa-solid fa-chart-pie w-5"></i> Dashboard</button>
             <button onclick="nav('users')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-users w-5"></i> Members</button>
-            <button onclick="nav('withdraw')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-wallet w-5"></i> Withdraws</button>
             <button onclick="nav('tasks')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-list-check w-5"></i> Tasks</button>
-            
-            <!-- NEW BROADCAST BUTTON -->
+            <button onclick="nav('withdraw')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-wallet w-5"></i> Withdraws</button>
             <button onclick="nav('broadcast')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-bullhorn w-5"></i> Broadcast</button>
-            
             <button onclick="nav('settings')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-slate-700"><i class="fa-solid fa-gear w-5"></i> Settings</button>
         </nav>
         <div class="p-4 border-t border-slate-700"><button onclick="firebase.auth().signOut()" class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-red-400 bg-red-500/10 hover:bg-red-500 hover:text-white transition"><i class="fa-solid fa-power-off"></i> Logout</button></div>
     </aside>
 
+    <!-- MAIN CONTENT -->
     <main class="flex-1 flex flex-col h-screen overflow-hidden md:ml-64 w-full bg-slate-900">
         <header class="h-20 bg-slate-800/80 backdrop-blur border-b border-slate-700 flex items-center justify-between px-6 z-20">
             <div class="flex items-center gap-4"><button onclick="toggleSidebar()" class="md:hidden text-gray-300 hover:text-white"><i class="fa-solid fa-bars text-xl"></i></button><h2 id="pageTitle" class="text-lg font-bold text-white tracking-wide">Dashboard</h2></div>
@@ -66,41 +80,55 @@
             <div id="t-home" class="page block space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg"><p class="text-xs text-gray-400 uppercase font-bold">Total Users</p><h2 id="stUser" class="text-4xl font-bold text-white mt-2">...</h2></div>
+                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg"><p class="text-xs text-gray-400 uppercase font-bold">Total Liability</p><h2 id="stLiability" class="text-4xl font-bold text-yellow-500 mt-2">...</h2></div>
                     <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg"><p class="text-xs text-gray-400 uppercase font-bold">Pending Pay</p><h2 id="stPay" class="text-4xl font-bold text-red-400 mt-2">...</h2></div>
                 </div>
             </div>
 
-            <!-- BROADCAST PAGE (NEW) -->
-            <div id="t-broadcast" class="page hidden">
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 max-w-2xl shadow-lg">
-                    <h3 class="font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-paper-plane text-yellow-500"></i> Send Message to All Users</h3>
-                    
-                    <label class="block text-xs text-gray-400 mb-2 uppercase font-bold">Message</label>
-                    <textarea id="broadMsg" rows="5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm outline-none focus:border-yellow-500 mb-4" placeholder="Type your message here..."></textarea>
-                    
-                    <div class="grid grid-cols-2 gap-4 mb-6">
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-2 uppercase font-bold">Button Text (Optional)</label>
-                            <input id="broadBtnTxt" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm focus:border-yellow-500" placeholder="e.g. Join Channel">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-2 uppercase font-bold">Button Link (Optional)</label>
-                            <input id="broadBtnUrl" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm focus:border-yellow-500" placeholder="https://t.me/...">
-                        </div>
+            <!-- USERS (With Edit & Delete) -->
+            <div id="t-users" class="page hidden space-y-4">
+                <div class="flex justify-between bg-slate-800 p-4 rounded-xl border border-slate-700"><h3>Member List</h3><button onclick="loadUsers()" class="bg-blue-600 px-4 py-2 rounded text-xs font-bold text-white">Refresh</button></div>
+                <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-gray-400">
+                            <thead class="bg-slate-700 text-white text-xs uppercase"><tr><th class="p-4">User</th><th class="p-4">Balance</th><th class="p-4 text-center">Action</th></tr></thead>
+                            <tbody id="userTable"></tbody>
+                        </table>
                     </div>
-
-                    <button onclick="sendBroadcast()" id="broadSendBtn" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg shadow-lg transition flex justify-center items-center gap-2">
-                        <i class="fa-solid fa-rocket"></i> Send Broadcast
-                    </button>
-                    <p id="broadStatus" class="text-center text-xs mt-3 text-gray-400"></p>
                 </div>
             </div>
 
-            <!-- Other Tabs (Users, Tasks, Withdraw, Settings - Compacted for brevity) -->
-            <div id="t-users" class="page hidden space-y-4"><div class="flex justify-between bg-slate-800 p-4 rounded-xl border border-slate-700"><h3>Members</h3><button onclick="loadUsers()" class="bg-blue-600 px-4 py-2 rounded text-xs font-bold text-white">Refresh</button></div><div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-left text-sm text-gray-400"><thead class="bg-slate-700 text-white text-xs uppercase"><tr><th class="p-4">User</th><th class="p-4">Balance</th><th class="p-4 text-center">Action</th></tr></thead><tbody id="userTable"></tbody></table></div></div></div>
-            <div id="t-withdraw" class="page hidden space-y-4"><button onclick="loadW()" class="bg-blue-600 text-white px-4 py-2 rounded text-xs font-bold">Refresh</button><div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-left text-sm text-gray-400"><thead class="bg-slate-700 text-white text-xs uppercase"><tr><th class="p-4">Info</th><th class="p-4">Amount</th><th class="p-4">Decision</th></tr></thead><tbody id="wTable"></tbody></table></div></div></div>
-            <div id="t-tasks" class="page hidden space-y-6"><div class="bg-slate-800 p-6 rounded-2xl border border-slate-700"><h3 class="font-bold text-white mb-4">Add Task</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"><input id="tt" placeholder="Title" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"><input id="tl" placeholder="Link" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"><input id="tr" placeholder="Reward" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"><input id="tm" placeholder="Time" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div><button onclick="addTask()" class="bg-yellow-600 text-black font-bold px-6 py-2 rounded">Publish</button></div><div id="taskList" class="space-y-3"></div></div>
-            <div id="t-settings" class="page hidden space-y-4"><div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 max-w-2xl"><h3 class="font-bold text-white mb-4">Config</h3><label class="text-xs text-gray-400 block mb-1">Refer Bonus</label><input id="setRefBonus" type="number" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white mb-3"><label class="text-xs text-gray-400 block mb-1">Min Withdraw</label><input id="setMinW" type="number" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white mb-3"><label class="text-xs text-gray-400 block mb-1">Notice</label><textarea id="setNot" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white mb-3"></textarea><label class="text-xs text-gray-400 block mb-1">Channel</label><input id="setChannel" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white mb-3"><div class="flex justify-between bg-slate-900 p-3 rounded border border-slate-600 mb-3"><span>Maintenance</span><input type="checkbox" id="setMaint"></div><div class="flex justify-between bg-slate-900 p-3 rounded border border-slate-600 mb-4"><span>Spin Game</span><input type="checkbox" id="setShowSpin"></div><button onclick="saveSet()" class="bg-yellow-600 text-black font-bold px-6 py-2 rounded">Save</button></div></div>
+            <!-- TASKS (With Edit & Delete) -->
+            <div id="t-tasks" class="page hidden space-y-6">
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg">
+                    <h3 class="font-bold text-white mb-4 border-b border-slate-700 pb-2">Add New Task</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div><label class="text-xs text-gray-400 mb-1 block">Title</label><input id="tt" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
+                        <div><label class="text-xs text-gray-400 mb-1 block">Link</label><input id="tl" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
+                        <div><label class="text-xs text-gray-400 mb-1 block">Reward</label><input id="tr" type="number" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
+                        <div><label class="text-xs text-gray-400 mb-1 block">Time</label><input id="tm" type="number" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
+                    </div>
+                    <button onclick="addTask()" class="bg-yellow-600 text-black font-bold px-6 py-2 rounded">Publish Task</button>
+                </div>
+                <div id="taskList" class="space-y-3"></div>
+            </div>
+
+            <!-- BROADCAST -->
+            <div id="t-broadcast" class="page hidden">
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 max-w-2xl shadow-lg">
+                    <h3 class="font-bold text-white mb-4">📢 Broadcast Message</h3>
+                    <textarea id="broadMsg" rows="4" class="w-full bg-slate-900 border border-slate-600 rounded p-3 text-white mb-4" placeholder="Message content..."></textarea>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <input id="broadBtnTxt" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white" placeholder="Button Name">
+                        <input id="broadBtnUrl" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white" placeholder="Button Link">
+                    </div>
+                    <button onclick="sendBroadcast()" class="bg-blue-600 text-white px-6 py-2 rounded font-bold w-full">Send Now</button>
+                </div>
+            </div>
+
+            <!-- WITHDRAW & SETTINGS (Simplified) -->
+            <div id="t-withdraw" class="page hidden space-y-4"><button onclick="loadW()" class="bg-blue-600 text-white px-4 py-2 rounded text-xs font-bold">Refresh</button><div class="bg-slate-800 rounded-xl overflow-auto"><table class="w-full text-left text-sm text-gray-400"><tbody id="wTable"></tbody></table></div></div>
+            <div id="t-settings" class="page hidden space-y-4"><div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 max-w-2xl"><h3 class="font-bold text-white mb-4">Config</h3><label class="text-xs text-gray-400">Refer Bonus</label><input id="setRefBonus" type="number" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white mb-3"><label class="text-xs text-gray-400">Min Withdraw</label><input id="setMinW" type="number" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white mb-3"><label class="text-xs text-gray-400">Notice</label><textarea id="setNot" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white mb-3"></textarea><label class="text-xs text-gray-400">Channel</label><input id="setChannel" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white mb-3"><div class="flex justify-between bg-slate-900 p-3 rounded mb-3"><span>Maintenance</span><input type="checkbox" id="setMaint"></div><div class="flex justify-between bg-slate-900 p-3 rounded mb-3"><span>Spin Game</span><input type="checkbox" id="setShowSpin"></div><button onclick="saveSet()" class="bg-yellow-600 text-black px-6 py-2 rounded font-bold">Save</button></div></div>
         
         </div>
     </main>
@@ -118,30 +146,22 @@
             messagingSenderId: "278970320528",
             appId: "1:278970320528:web:30d08c635ed9e623f1ba15"
         };
+        try { firebase.initializeApp(firebaseConfig); } catch(e){}
+        const auth=firebase.auth(); const db=firebase.firestore();
+
+        function doLogin(e){e.preventDefault();auth.signInWithEmailAndPassword(document.getElementById('em').value,document.getElementById('pw').value).catch(e=>{document.getElementById('errMsg').innerText=e.message;document.getElementById('errMsg').classList.remove('hidden')})}
+        auth.onAuthStateChanged(u=>{if(u){document.getElementById('login').classList.add('hidden');init()}else{document.getElementById('login').classList.remove('hidden')}});
         
-        try { firebase.initializeApp(firebaseConfig); } catch(e) {}
-        const auth = firebase.auth(); const db = firebase.firestore();
-
-        // Login Logic
-        function doLogin(e) {
-            e.preventDefault();
-            auth.signInWithEmailAndPassword(document.getElementById('em').value, document.getElementById('pw').value)
-                .catch(error => { document.getElementById('errMsg').innerText = "Login Failed"; document.getElementById('errMsg').classList.remove('hidden'); });
-        }
-        auth.onAuthStateChanged(u => { if(u){ document.getElementById('login').classList.add('hidden'); init(); } else { document.getElementById('login').classList.remove('hidden'); } });
-
-        // Nav Logic
-        function toggleSidebar(){ const s=document.getElementById('sidebar'); const b=document.getElementById('backdrop'); s.classList.toggle('-translate-x-full'); b.classList.toggle('hidden'); }
+        function toggleSidebar(){const s=document.getElementById('sidebar');const b=document.getElementById('backdrop');s.classList.toggle('-translate-x-full');b.classList.toggle('hidden');}
         function nav(p){
-            document.querySelectorAll('.page').forEach(e=>e.classList.add('hidden')); document.getElementById('t-'+p).classList.remove('hidden');
+            document.querySelectorAll('.page').forEach(e=>e.classList.add('hidden'));document.getElementById('t-'+p).classList.remove('hidden');
             document.querySelectorAll('.nav-item').forEach(e=>{e.classList.remove('bg-yellow-500/10','text-yellow-400');e.classList.add('text-gray-400')});
             event.currentTarget.classList.remove('text-gray-400'); event.currentTarget.classList.add('bg-yellow-500/10','text-yellow-400');
             document.getElementById('pageTitle').innerText = p.charAt(0).toUpperCase() + p.slice(1);
-            if(window.innerWidth<768) toggleSidebar();
+            if(window.innerWidth<768)toggleSidebar();
             if(p=='users')loadUsers(); if(p=='tasks')loadTasks(); if(p=='withdraw')loadW();
         }
 
-        // Init
         function init(){
             db.collection('users').get().then(s=>document.getElementById('stUser').innerText=s.size);
             db.collection('withdrawals').where('status','==','pending').onSnapshot(s=>document.getElementById('stPay').innerText=s.size);
@@ -153,53 +173,60 @@
                 document.getElementById('setMinW').value=d.data().minWithdraw||50000;
                 document.getElementById('setShowSpin').checked=d.data().showSpin||false;
             }});
+            let t=0; db.collection('users').get().then(s=>{s.forEach(d=>t+=(d.data().balance||0)); document.getElementById('stLiability').innerText=t.toLocaleString();});
         }
 
-        // --- BROADCAST LOGIC (NEW) ---
-        async function sendBroadcast() {
-            const msg = document.getElementById('broadMsg').value;
-            const btnTxt = document.getElementById('broadBtnTxt').value;
-            const btnLink = document.getElementById('broadBtnUrl').value;
-            const btn = document.getElementById('broadSendBtn');
-            const status = document.getElementById('broadStatus');
-
-            if(!msg) return alert("Please enter a message!");
-
-            btn.innerText = "Sending... Please wait";
-            btn.disabled = true;
-            status.innerText = "Processing broadcast...";
-
-            try {
-                const response = await fetch('/api/broadcast', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: msg, btnText: btnTxt, btnLink: btnLink })
-                });
-                
-                const data = await response.json();
-                
-                if(data.success) {
-                    alert(`✅ Broadcast Sent!\nSuccess: ${data.sent}\nFailed: ${data.failed}`);
-                    document.getElementById('broadMsg').value = '';
-                } else {
-                    alert("Error: " + data.error);
-                }
-            } catch (e) {
-                alert("Request Failed: " + e.message);
-            }
-
-            btn.innerHTML = '<i class="fa-solid fa-rocket"></i> Send Broadcast';
-            btn.disabled = false;
-            status.innerText = "";
+        // --- TASKS (Edit Logic Added) ---
+        async function loadTasks(){
+            const d=document.getElementById('taskList'); d.innerHTML='Loading...';
+            const s=await db.collection('tasks').where('active','==',true).get(); d.innerHTML='';
+            s.forEach(o=>{
+                const t=o.data();
+                d.innerHTML+=`
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center group hover:border-yellow-500/30 transition">
+                    <div><div class="font-bold text-white text-sm">${t.title}</div><div class="text-xs text-gray-500">${t.link}</div></div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-yellow-400 mr-2">${t.reward}</span>
+                        <button onclick="openEdit('${o.id}','${t.title}','${t.link}',${t.reward},${t.timer}')" class="bg-blue-600/20 text-blue-400 p-2 rounded hover:bg-blue-600 hover:text-white"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="delT('${o.id}')" class="bg-red-600/20 text-red-400 p-2 rounded hover:bg-red-600 hover:text-white"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>`;
+            });
         }
-
-        // --- OTHER FUNCTIONS (Compressed) ---
-        async function loadUsers(){const t=document.getElementById('userTable');t.innerHTML='<tr><td colspan="4" class="p-4 text-center">Loading...</td></tr>';const s=await db.collection('users').limit(50).get(); t.innerHTML='';s.forEach(d=>{const u=d.data();t.innerHTML+=`<tr class="border-b border-slate-700 hover:bg-slate-800/50"><td class="p-4"><div class="font-bold text-white">${u.name}</div><div class="text-xs text-gray-500 font-mono">${u.id}</div></td><td class="p-4 font-bold text-yellow-400">${u.balance}</td><td class="p-4 text-center"><button onclick="del('${d.id}')" class="text-red-500">Del</button></td></tr>`;});}
-        async function del(i){if(confirm('Delete?')) await db.collection('users').doc(i).delete(); loadUsers();}
-        async function loadTasks(){const d=document.getElementById('taskList'); d.innerHTML='Loading...'; const s=await db.collection('tasks').where('active','==',true).get(); d.innerHTML=''; s.forEach(o=>{const t=o.data(); d.innerHTML+=`<div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center"><div><div class="font-bold text-white text-sm">${t.title}</div><div class="text-xs text-gray-500">${t.link}</div></div><button onclick="delT('${o.id}')" class="text-red-500">Del</button></div>`;});}
-        async function addTask(){const t=document.getElementById('tt').value, l=document.getElementById('tl').value, r=document.getElementById('tr').value, m=document.getElementById('tm').value; if(t&&l&&r){ await db.collection('tasks').add({title:t, link:l, reward:Number(r), timer:Number(m)||10, active:true}); document.getElementById('tt').value=''; loadTasks(); }}
+        function openEdit(id,t,l,r,tm){ document.getElementById('editId').value=id; document.getElementById('editTitle').value=t; document.getElementById('editLink').value=l; document.getElementById('editReward').value=r; document.getElementById('editTimer').value=tm; document.getElementById('editTaskModal').classList.remove('hidden'); }
+        async function saveTaskEdit(){ const id=document.getElementById('editId').value; await db.collection('tasks').doc(id).update({ title:document.getElementById('editTitle').value, link:document.getElementById('editLink').value, reward:Number(document.getElementById('editReward').value), timer:Number(document.getElementById('editTimer').value) }); document.getElementById('editTaskModal').classList.add('hidden'); loadTasks(); }
+        async function addTask(){const t=document.getElementById('tt').value, l=document.getElementById('tl').value, r=document.getElementById('tr').value, m=document.getElementById('tm').value; if(t&&l&&r&&m){ await db.collection('tasks').add({title:t, link:l, reward:Number(r), timer:Number(m), active:true, createdAt: new Date()}); document.getElementById('tt').value=''; document.getElementById('tl').value=''; loadTasks(); } else { alert("Empty Fields!"); }}
         async function delT(i){if(confirm('Delete?')) await db.collection('tasks').doc(i).update({active:false}); loadTasks();}
-        async function loadW(){const t=document.getElementById('wTable'); t.innerHTML='Loading...'; const s=await db.collection('withdrawals').where('status','==','pending').get(); t.innerHTML=''; s.forEach(d=>{const w=d.data(); t.innerHTML+=`<tr class="border-b border-slate-700"><td class="p-4">${w.userName}<br>${w.number}</td><td class="p-4 font-bold text-yellow-400">${w.amount}</td><td class="p-4"><button onclick="procW('${d.id}','paid')" class="text-green-500 mr-2">Pay</button><button onclick="procW('${d.id}','rejected')" class="text-red-500">Rej</button></td></tr>`;});}
+
+        // --- USERS (Edit Balance) ---
+        async function loadUsers(){
+            const t=document.getElementById('userTable'); t.innerHTML='Loading...';
+            const s=await db.collection('users').limit(50).get(); t.innerHTML='';
+            s.forEach(d=>{
+                const u=d.data();
+                t.innerHTML+=`<tr class="border-b border-slate-700 hover:bg-slate-800/50">
+                    <td class="p-4"><div class="font-bold text-white">${u.name}</div><div class="text-xs text-gray-500">${u.id}</div></td>
+                    <td class="p-4 font-bold text-yellow-400">${u.balance}</td>
+                    <td class="p-4 flex justify-center gap-2">
+                        <button onclick="editBal('${d.id}',${u.balance})" class="bg-blue-600/20 text-blue-400 p-2 rounded hover:bg-blue-600 hover:text-white"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="del('${d.id}')" class="bg-red-600/20 text-red-400 p-2 rounded hover:bg-red-600 hover:text-white"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>`;
+            });
+        }
+        async function editBal(i,o){const n=prompt('New Balance:',o); if(n) await db.collection('users').doc(i).update({balance:Number(n)}); loadUsers();}
+        async function del(i){if(confirm('Delete?')) await db.collection('users').doc(i).delete(); loadUsers();}
+
+        // --- BROADCAST ---
+        async function sendBroadcast(){
+            const msg = document.getElementById('broadMsg').value;
+            if(!msg) return alert("Msg empty");
+            await fetch('/api/broadcast', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg, btnText:document.getElementById('broadBtnTxt').value, btnLink:document.getElementById('broadBtnUrl').value})});
+            alert("Sent!");
+        }
+
+        // --- WITHDRAW ---
+        async function loadW(){const t=document.getElementById('wTable'); t.innerHTML='Loading...'; const s=await db.collection('withdrawals').where('status','==','pending').get(); t.innerHTML=''; s.forEach(d=>{const w=d.data(); t.innerHTML+=`<tr class="border-b border-slate-700"><td class="p-4"><div class="font-bold text-white">${w.userName}</div><div class="text-xs text-emerald-400">${w.method} - ${w.number}</div></td><td class="p-4 font-bold text-yellow-400">${w.amount}</td><td class="p-4 flex gap-2"><button onclick="procW('${d.id}','paid')" class="text-green-500">Approve</button><button onclick="procW('${d.id}','rejected')" class="text-red-500">Reject</button></td></tr>`;});}
         async function procW(id,st){if(confirm(st+"?")){await db.collection('withdrawals').doc(id).update({status:st}); loadW();}}
         async function saveSet(){await db.collection('settings').doc('config').set({notice:document.getElementById('setNot').value, maintenance:document.getElementById('setMaint').checked, channelLink:document.getElementById('setChannel').value, showSpin:document.getElementById('setShowSpin').checked, referBonus:Number(document.getElementById('setRefBonus').value), minWithdraw:Number(document.getElementById('setMinW').value)},{merge:true}); alert('Saved!');}
     </script>
